@@ -121,7 +121,7 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public User updateProfile(Long userId, String name, String phoneNumber, String skills, String interests) {
+    public User updateProfile(Long userId, String name, String phoneNumber, String gender, String skills, String interests) {
         log.info("Updating profile for user ID: {}", userId);
         User user = findById(userId);
         if (name != null) {
@@ -129,6 +129,9 @@ public class UserService {
         }
         if (phoneNumber != null) {
             user.setPhoneNumber(phoneNumber);
+        }
+        if (gender != null) {
+            user.setGender(gender);
         }
         return userRepository.save(user);
     }

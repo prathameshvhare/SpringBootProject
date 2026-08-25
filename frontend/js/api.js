@@ -49,7 +49,7 @@ async function apiRequest(endpoint, method = 'GET', data = null) {
         if (contentType && contentType.includes('application/json')) {
             result = await response.json();
         } else {
-            const text = await text();
+            const text = await response.text();
             result = { message: text };
         }
 

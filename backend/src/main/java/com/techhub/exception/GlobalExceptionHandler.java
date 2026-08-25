@@ -16,13 +16,17 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleDtoValidation(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
+        String firstError = "Validation Failed";
         for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
             errors.put(fieldError.getField(), fieldError.getDefaultMessage());
+            if (firstError.equals("Validation Failed")) {
+                firstError = fieldError.getDefaultMessage();
+            }
         }
 
         Map<String, Object> response = new HashMap<>();
         response.put("success", false);
-        response.put("message", "Validation Failed");
+        response.put("message", firstError);
         response.put("errors", errors);
         return ResponseEntity.badRequest().body(response);
     }
@@ -30,8 +34,9 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BusinessValidationException.class)
     public ResponseEntity<Map<String, Object>> handleBusinessValidation(BusinessValidationException ex) {
         Map<String, Object> response = new HashMap<>();
+        String firstError = ex.getErrors().values().stream().findFirst().orElse("Validation Failed");
         response.put("success", false);
-        response.put("message", "Validation Failed");
+        response.put("message", firstError);
         response.put("errors", ex.getErrors());
         return ResponseEntity.badRequest().body(response);
     }

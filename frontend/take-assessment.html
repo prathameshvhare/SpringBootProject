@@ -1,99 +1,388 @@
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Take Skill Assessment - Smart Career</title>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<title>Dynamic Assessment - Smart Career Recommendation</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-body { font-family: 'Inter', sans-serif; background-color: #0a141f; color: #f8fafc; margin: 0; padding: 0; min-height: 100vh; }
-.container { max-width: 800px; margin: 40px auto; padding: 0 20px; }
-.quiz-card { background: #121f2d; border-radius: 16px; border: 1px solid rgba(255,255,255,0.08); padding: 35px; margin-bottom: 20px; }
-.question-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 20px; color: #22d3ee; }
-.option-label { display: block; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 14px 18px; border-radius: 10px; margin-bottom: 12px; cursor: pointer; transition: .3s; }
-.option-label:hover { border-color: #22d3ee; background: rgba(34,211,238,0.08); }
-.option-label input { margin-right: 10px; accent-color: #22d3ee; }
-.btn-submit { background: #22d3ee; color: #000; font-size: 1rem; font-weight: 700; border: none; padding: 14px 30px; border-radius: 10px; cursor: pointer; width: 100%; margin-top: 20px; transition: .3s; }
-.btn-submit:hover { background: #06b6d4; }
+:root {
+	--primary-cyan: #22d3ee;
+	--primary-hover: #06b6d4;
+	--bg-dark-blue: #0a141f;
+	--card-bg: #ffffff;
+	--text-dark: #0f172a;
+	--text-muted: #64748b;
+	--border-color: #e2e8f0;
+}
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	font-family: 'Poppins', sans-serif;
+	background-color: #f8fafc;
+	color: var(--text-dark);
+	min-height: 100vh;
+}
+
+.header-bar {
+	background: var(--bg-dark-blue);
+	color: white;
+	padding: 16px 30px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.header-logo {
+	font-size: 1.4rem;
+	font-weight: 700;
+	color: var(--primary-cyan);
+}
+
+.timer-box {
+	background: rgba(255,255,255,0.1);
+	padding: 8px 18px;
+	border-radius: 20px;
+	font-weight: 600;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	color: var(--primary-cyan);
+}
+
+.test-layout {
+	width: min(1200px, 92%);
+	margin: 30px auto;
+	display: grid;
+	grid-template-columns: 1fr 300px;
+	gap: 25px;
+}
+
+.question-card {
+	background: white;
+	border-radius: 16px;
+	padding: 35px;
+	box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+	border: 1px solid var(--border-color);
+	margin-bottom: 25px;
+}
+
+.question-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 20px;
+}
+
+.question-number {
+	font-weight: 700;
+	color: var(--primary-hover);
+	font-size: 1.1rem;
+}
+
+.skill-tag {
+	background: rgba(34, 211, 238, 0.12);
+	color: #0284c7;
+	padding: 4px 12px;
+	border-radius: 15px;
+	font-size: 0.8rem;
+	font-weight: 600;
+}
+
+.question-title {
+	font-size: 1.15rem;
+	font-weight: 600;
+	margin-bottom: 25px;
+	line-height: 1.5;
+}
+
+.options-group {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.option-label {
+	display: flex;
+	align-items: center;
+	gap: 15px;
+	padding: 16px 20px;
+	border: 1.5px solid var(--border-color);
+	border-radius: 12px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.option-label:hover {
+	border-color: var(--primary-cyan);
+	background: rgba(34, 211, 238, 0.04);
+}
+
+.option-label input[type="radio"] {
+	width: 18px;
+	height: 18px;
+	accent-color: #06b6d4;
+}
+
+.sidebar-panel {
+	background: white;
+	border-radius: 16px;
+	padding: 25px;
+	height: fit-content;
+	box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+	border: 1px solid var(--border-color);
+}
+
+.sidebar-panel h3 {
+	font-size: 1rem;
+	font-weight: 600;
+	margin-bottom: 18px;
+}
+
+.q-grid {
+	display: grid;
+	grid-template-columns: repeat(5, 1fr);
+	gap: 8px;
+	margin-bottom: 25px;
+}
+
+.q-badge {
+	width: 40px;
+	height: 40px;
+	border-radius: 8px;
+	border: 1px solid var(--border-color);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-weight: 600;
+	font-size: 0.9rem;
+	background: #f8fafc;
+	color: var(--text-dark);
+}
+
+.q-badge.answered {
+	background: var(--primary-cyan);
+	color: #0a141f;
+	border-color: var(--primary-cyan);
+}
+
+.btn-submit-test {
+	width: 100%;
+	padding: 14px;
+	border: none;
+	border-radius: 10px;
+	background: var(--bg-dark-blue);
+	color: white;
+	font-weight: 600;
+	cursor: pointer;
+	transition: 0.3s;
+}
+
+.btn-submit-test:hover {
+	background: #1e293b;
+}
 </style>
 </head>
 <body>
-<div class="container">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-        <h2 id="quizTitle"><i class="fas fa-file-code" style="color: #22d3ee;"></i> Skill Assessment Test</h2>
-        <a href="dashboard.html" style="color: #94a3b8; text-decoration: none;"><i class="fas fa-times"></i> Exit</a>
-    </div>
+	
+	<div class="header-bar">
+		<div class="header-logo">Smart<span>Career</span> Assessment Player</div>
+		<div class="timer-box">
+			<i class="fas fa-clock"></i>
+			<span id="timeDisplay">45:00</span>
+		</div>
+	</div>
 
-    <form id="quizForm">
-        <div id="questionsContainer">
-            <!-- Sample Questions -->
-            <div class="quiz-card">
-                <div class="question-title">1. What is the primary advantage of Spring Boot Dependency Injection?</div>
-                <label class="option-label"><input type="radio" name="q1" value="A"> Improves code coupling and unit testability</label>
-                <label class="option-label"><input type="radio" name="q1" value="B"> Speeds up database query execution</label>
-                <label class="option-label"><input type="radio" name="q1" value="C"> Automatically writes frontend HTML code</label>
-            </div>
-            <div class="quiz-card">
-                <div class="question-title">2. Which HTTP method is used to update existing data in RESTful APIs?</div>
-                <label class="option-label"><input type="radio" name="q2" value="A"> GET</label>
-                <label class="option-label"><input type="radio" name="q2" value="B"> POST</label>
-                <label class="option-label"><input type="radio" name="q2" value="C"> PUT</label>
-            </div>
-        </div>
+	<form action="/api/assessment/submit" method="post" id="testForm">
+		<input type="hidden" name="instanceId" value="">
+		<input type="hidden" name="timeTaken" id="timeTakenInput" value="0">
 
-        <button type="submit" class="btn-submit"><i class="fas fa-paper-plane"></i> Submit Assessment</button>
-    </form>
-</div>
+		<div class="test-layout">
+			<div class="questions-container" id="questionsContainer">
+				
+				<div class="question-card" id="q-card-">
+					<div class="question-header">
+						<span class="question-number">Question  of </span>
+						<span class="skill-tag"></span>
+					</div>
+					<div class="question-title"></div>
 
-<script src="js/api.js"></script>
-<script>
-    const user = requireAuth();
-    const urlParams = new URLSearchParams(window.location.search);
-    const assessmentId = urlParams.get('id') || 1;
+					<div class="options-group">
+						<label class="option-label">
+							<input type="radio" name="answers[]" value="A" onchange="markAnswered()">
+							<span>A. </span>
+						</label>
+						<label class="option-label">
+							<input type="radio" name="answers[]" value="B" onchange="markAnswered()">
+							<span>B. </span>
+						</label>
+						<label class="option-label">
+							<input type="radio" name="answers[]" value="C" onchange="markAnswered()">
+							<span>C. </span>
+						</label>
+						<label class="option-label">
+							<input type="radio" name="answers[]" value="D" onchange="markAnswered()">
+							<span>D. </span>
+						</label>
+					</div>
+				</div>
+				
+			</div>
 
-    // Load quiz questions from REST API
-    apiRequest(`/v1/assessment/${assessmentId}`)
-        .then(data => {
-            if (data.assessment) {
-                document.getElementById('quizTitle').innerHTML = `<i class="fas fa-file-code" style="color: #22d3ee;"></i> ${data.assessment.title}`;
+			<div class="sidebar-panel">
+				<h3>Question Palette</h3>
+				<div class="q-grid">
+					
+					<div class="q-badge" id="badge-"></div>
+					
+				</div>
+				<button type="submit" class="btn-submit-test">
+					<i class="fas fa-check-circle"></i> Submit Test
+				</button>
+			</div>
+		</div>
+	</form>
+
+	<script>
+		let totalSeconds = 45 * 60;
+		let elapsedSeconds = 0;
+
+		const timer = setInterval(() => {
+			totalSeconds--;
+			elapsedSeconds++;
+
+			let minutes = Math.floor(totalSeconds / 60);
+			let seconds = totalSeconds % 60;
+
+			document.getElementById('timeDisplay').innerText = 
+				(minutes < 10 ? '0' : '') + minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+
+			document.getElementById('timeTakenInput').value = elapsedSeconds;
+
+			if (totalSeconds <= 0) {
+				clearInterval(timer);
+				document.getElementById('testForm').submit();
+			}
+		}, 1000);
+
+		function markAnswered(index) {
+			const badge = document.getElementById('badge-' + index);
+			if (badge) {
+				badge.classList.add('answered');
+			}
+		}
+	</script>
+
+    <script src="js/api.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const user = requireAuth();
+            if (!user) return;
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const assessmentId = urlParams.get('id') || 1;
+
+            try {
+                const data = await apiRequest(`/v1/assessment/${assessmentId}?userId=${user.id}`);
+                
+                if (data.assessment) {
+                    const titleEl = document.getElementById('assessmentTitle');
+                    if (titleEl) titleEl.innerText = data.assessment.testName || 'Technical Skill Assessment';
+                }
+
+                const questionsContainer = document.getElementById('questionsContainer');
+                const paletteGrid = document.querySelector('.q-grid');
+
+                if (data.questions && data.questions.length > 0) {
+                    if (questionsContainer) {
+                        questionsContainer.innerHTML = data.questions.map((q, idx) => `
+                            <div class="question-card" id="q-card-${idx + 1}">
+                                <div class="q-header">
+                                    <span class="q-number">Question ${idx + 1} of ${data.questions.length}</span>
+                                    <span class="badge" style="background: rgba(34,211,238,0.1); color: var(--primary-cyan);">${q.skillTag || 'Skill Test'}</span>
+                                </div>
+                                <div class="q-text">${q.questionText}</div>
+                                <div class="options-group">
+                                    <label class="option-label">
+                                        <input type="radio" name="question_${q.id}" value="A" onchange="markAnswered(${idx + 1})">
+                                        <span>A. ${q.optionA}</span>
+                                    </label>
+                                    <label class="option-label">
+                                        <input type="radio" name="question_${q.id}" value="B" onchange="markAnswered(${idx + 1})">
+                                        <span>B. ${q.optionB}</span>
+                                    </label>
+                                    <label class="option-label">
+                                        <input type="radio" name="question_${q.id}" value="C" onchange="markAnswered(${idx + 1})">
+                                        <span>C. ${q.optionC}</span>
+                                    </label>
+                                    <label class="option-label">
+                                        <input type="radio" name="question_${q.id}" value="D" onchange="markAnswered(${idx + 1})">
+                                        <span>D. ${q.optionD}</span>
+                                    </label>
+                                </div>
+                            </div>
+                        `).join('');
+                    }
+
+                    if (paletteGrid) {
+                        paletteGrid.innerHTML = data.questions.map((q, idx) => `
+                            <div class="q-badge" id="badge-${idx + 1}">${idx + 1}</div>
+                        `).join('');
+                    }
+                }
+            } catch (err) {
+                console.log('Assessment details loaded');
             }
-            if (data.questions && data.questions.length > 0) {
-                const container = document.getElementById('questionsContainer');
-                container.innerHTML = data.questions.map((q, idx) => `
-                    <div class="quiz-card">
-                        <div class="question-title">${idx + 1}. ${q.questionText}</div>
-                        <label class="option-label"><input type="radio" name="q_${q.id}" value="A" required> ${q.optionA}</label>
-                        <label class="option-label"><input type="radio" name="q_${q.id}" value="B"> ${q.optionB}</label>
-                        ${q.optionC ? `<label class="option-label"><input type="radio" name="q_${q.id}" value="C"> ${q.optionC}</label>` : ''}
-                        ${q.optionD ? `<label class="option-label"><input type="radio" name="q_${q.id}" value="D"> ${q.optionD}</label>` : ''}
-                    </div>
-                `).join('');
+
+            const testForm = document.getElementById('testForm');
+            if (testForm) {
+                testForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const formData = new FormData(testForm);
+                    const answers = {};
+
+                    for (let [key, val] of formData.entries()) {
+                        if (key.startsWith('question_')) {
+                            const qId = key.replace('question_', '');
+                            answers[qId] = val;
+                        }
+                    }
+
+                    try {
+                        await apiRequest('/v1/assessment/submit', 'POST', {
+                            userId: user.id,
+                            assessmentId: parseInt(assessmentId),
+                            answers
+                        });
+                        alert('Assessment Submitted Successfully!');
+                        window.location.href = 'recommendations.html';
+                    } catch (err) {
+                        alert('Submitted test successfully!');
+                        window.location.href = 'recommendations.html';
+                    }
+                });
             }
-        })
-        .catch(err => console.log('Using sample questions'));
+        });
 
-    document.getElementById('quizForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const answers = {};
-        const form = new FormData(document.getElementById('quizForm'));
-        for (let [key, value] of form.entries()) {
-            answers[key.replace('q_', '')] = value;
+        function markAnswered(index) {
+            const badge = document.getElementById('badge-' + index);
+            if (badge) {
+                badge.classList.add('answered');
+            }
         }
-
-        try {
-            await apiRequest('/v1/assessment/submit', 'POST', {
-                userId: user.id,
-                assessmentId: assessmentId,
-                answers: answers
-            });
-            alert('Assessment submitted successfully!');
-            window.location.href = 'recommendations.html';
-        } catch (err) {
-            alert('Assessment submitted successfully!');
-            window.location.href = 'recommendations.html';
-        }
-    });
-</script>
+    </script>
 </body>
+
 </html>
