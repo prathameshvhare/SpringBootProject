@@ -35,7 +35,7 @@ public class UserSkillRepository {
     }
 
     public List<UserSkill> findPrimarySkillsByUserId(Long userId) {
-        String sql = "SELECT * FROM user_skills WHERE user_id = ? AND is_primary = true";
+        String sql = "SELECT * FROM user_skills WHERE user_id = ? AND (is_primary = true OR is_primary = 1)";
         return jdbcTemplate.query(sql, userSkillRowMapper, userId);
     }
 

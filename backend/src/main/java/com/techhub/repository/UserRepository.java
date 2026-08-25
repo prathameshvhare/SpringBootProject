@@ -60,6 +60,10 @@ public class UserRepository {
 
         user.setPhoneNumber(rs.getString("phone_number"));
 
+        try {
+            user.setGender(rs.getString("gender"));
+        } catch (Exception ignored) {}
+
         user.setRole(rs.getString("role"));
 
         user.setSkills(rs.getString("skills"));
@@ -82,7 +86,7 @@ public class UserRepository {
 
         if (user.getId() == null) {
 
-            String sql = "INSERT INTO users (name, email, password, phone_number, role, skills, interests, registration_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO users (name, email, password, phone_number, gender, role, skills, interests, registration_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
             KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -98,13 +102,15 @@ public class UserRepository {
 
                 ps.setString(4, user.getPhoneNumber());
 
-                ps.setString(5, user.getRole() != null ? user.getRole() : "USER");
+                ps.setString(5, user.getGender() != null ? user.getGender() : "Not Specified");
 
-                ps.setString(6, user.getSkills());
+                ps.setString(6, user.getRole() != null ? user.getRole() : "USER");
 
-                ps.setString(7, user.getInterests());
+                ps.setString(7, user.getSkills());
 
-                ps.setDate(8, user.getRegistrationDate() != null ? java.sql.Date.valueOf(user.getRegistrationDate()) : java.sql.Date.valueOf(java.time.LocalDate.now()));
+                ps.setString(8, user.getInterests());
+
+                ps.setDate(9, user.getRegistrationDate() != null ? java.sql.Date.valueOf(user.getRegistrationDate()) : java.sql.Date.valueOf(java.time.LocalDate.now()));
 
                 return ps;
 
@@ -116,9 +122,9 @@ public class UserRepository {
 
         } else {
 
-            String sql = "UPDATE users SET name = ?, email = ?, password = ?, phone_number = ?, role = ?, skills = ?, interests = ? WHERE id = ?";
+            String sql = "UPDATE users SET name = ?, email = ?, password = ?, phone_number = ?, gender = ?, role = ?, skills = ?, interests = ? WHERE id = ?";
 
-            jdbcTemplate.update(sql, user.getName(), user.getEmail(), user.getPassword(), user.getPhoneNumber(), user.getRole(), user.getSkills(), user.getInterests(), user.getId());
+            jdbcTemplate.update(sql, user.getName(), user.getEmail(), user.getPassword(), user.getPhoneNumber(), user.getGender(), user.getRole(), user.getSkills(), user.getInterests(), user.getId());
 
             return findById(user.getId()).orElseThrow();
 

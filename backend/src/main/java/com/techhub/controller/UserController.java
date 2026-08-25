@@ -16,6 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
+@CrossOrigin(originPatterns = "*", allowCredentials = "true")
 public class UserController {
 
     private final UserService userService;
@@ -48,9 +49,10 @@ public class UserController {
     public ResponseEntity<User> updateProfile(@PathVariable Long id,
                                               @RequestParam(required = false) String name,
                                               @RequestParam(required = false) String phoneNumber,
+                                              @RequestParam(required = false) String gender,
                                               @RequestParam(required = false) String skills,
                                               @RequestParam(required = false) String interests) {
-        User user = userService.updateProfile(id, name, phoneNumber, skills, interests);
+        User user = userService.updateProfile(id, name, phoneNumber, gender, skills, interests);
         return ResponseEntity.ok(user);
     }
 

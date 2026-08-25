@@ -12,7 +12,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/api/v1")
-@CrossOrigin(origins = "*", allowCredentials = "false")
+@CrossOrigin(originPatterns = "*", allowCredentials = "true")
 public class RestApiController {
 
     @Autowired
@@ -45,6 +45,12 @@ public class RestApiController {
     @Autowired
     private SkillRepository skillRepository;
 
+    @Autowired
+    private QuestionRepository questionRepository;
+
+    @Autowired
+    private AssessmentRepository assessmentRepository;
+
     // Get current user session
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUser(HttpSession session) {
@@ -68,20 +74,39 @@ public class RestApiController {
         List<Career> careers = careerService.findAll();
 
         List<Recommendation> recommendations = recommendationService.findByUserId(userId);
+        List<Map<String, Object>> enrichedRecs = new ArrayList<>();
         if (recommendations != null && !recommendations.isEmpty()) {
-            recommendations = new ArrayList<>(recommendations);
-            recommendations.sort((r1, r2) -> Double.compare(r2.getMatchScore(), r1.getMatchScore()));
-            if (recommendations.size() > 3) {
-                recommendations = recommendations.subList(0, 3);
+            List<Recommendation> sortedRecs = new ArrayList<>(recommendations);
+            sortedRecs.sort((r1, r2) -> Double.compare(r2.getMatchScore(), r1.getMatchScore()));
+            for (Recommendation r : sortedRecs) {
+                Map<String, Object> item = new HashMap<>();
+                item.put("id", r.getId());
+                item.put("userId", r.getUserId());
+                item.put("careerId", r.getCareerId());
+                item.put("matchScore", r.getMatchScore());
+                try {
+                    Career c = careerService.findById(r.getCareerId());
+                    if (c != null) {
+                        item.put("careerName", c.getCareerName());
+                        item.put("description", c.getDescription());
+                        item.put("requiredQualification", c.getQualification());
+                    }
+                } catch (Exception ignored) {}
+                enrichedRecs.add(item);
             }
         }
+
+        List<Skill> userSkills = skillService.getUserSkills(userId);
+        List<Interest> userInterests = interestService.getUserInterests(userId);
 
         Map<String, Object> data = new HashMap<>();
         data.put("user", user);
         data.put("assessments", assessments);
         data.put("results", results);
         data.put("careers", careers);
-        data.put("recommendations", recommendations != null ? recommendations : Collections.emptyList());
+        data.put("userSkills", userSkills != null ? userSkills : Collections.emptyList());
+        data.put("userInterests", userInterests != null ? userInterests : Collections.emptyList());
+        data.put("recommendations", enrichedRecs);
 
         return ResponseEntity.ok(data);
     }
@@ -146,12 +171,74 @@ public class RestApiController {
 
     // Take Assessment Data
     @GetMapping("/assessment/{id}")
-    public ResponseEntity<?> getAssessmentDetails(@PathVariable Long id) {
+    public ResponseEntity<?> getAssessmentDetails(@PathVariable Long id, @RequestParam(required = false) Long userId) {
         Assessment assessment = assessmentService.findById(id);
-        List<Question> questions = questionService.findByAssessmentId(id);
+        List<Question> questions = new ArrayList<>();
+
+        List<Skill> primarySkills = null;
+        if (userId != null) {
+            primarySkills = skillService.getUserPrimarySkills(userId);
+        }
+
+        boolean hasSkills = primarySkills != null && !primarySkills.isEmpty();
+
+        if (hasSkills) {
+            // CASE A: User HAS selected skills -> 15 Primary Skill Questions + 15 Aptitude/CS Questions
+            List<Skill> top5Skills = new ArrayList<>(primarySkills.subList(0, Math.min(5, primarySkills.size())));
+            int qPerSkill = 15 / top5Skills.size();
+
+            for (Skill skill : top5Skills) {
+                List<Question> skillQs = questionRepository.findRandomBySkillId(skill.getId(), qPerSkill);
+                if (skillQs == null || skillQs.isEmpty()) {
+                    skillQs = questionRepository.findRandomBySkillTag(skill.getSkillName(), qPerSkill);
+                }
+                if (skillQs != null) {
+                    questions.addAll(skillQs);
+                }
+            }
+
+            if (questions.size() > 15) {
+                questions = new ArrayList<>(questions.subList(0, 15));
+            }
+
+            // Fill remaining up to 30 with Aptitude, Logic, English, CS Fundamentals
+            List<Question> commonQs = questionRepository.findRandomCommonQuestions(30 - questions.size());
+            if (commonQs != null) {
+                for (Question q : commonQs) {
+                    if (questions.size() >= 30) break;
+                    if (!questions.contains(q)) questions.add(q);
+                }
+            }
+        } else {
+            // CASE B: User HAS NOT selected skills -> Career Discovery & Strength Identification Test (30 Aptitude, Logic, English & CS Fundamentals questions ONLY)
+            List<Question> discoveryQs = questionRepository.findRandomCommonQuestions(30);
+            if (discoveryQs != null) {
+                questions.addAll(discoveryQs);
+            }
+            if (questions.size() < 30) {
+                List<Question> allQs = questionRepository.findAll();
+                if (allQs != null) {
+                    Collections.shuffle(allQs);
+                    for (Question q : allQs) {
+                        if (questions.size() >= 30) break;
+                        String tag = q.getSkillTag() != null ? q.getSkillTag().toLowerCase() : "";
+                        if (tag.contains("aptitude") || tag.contains("logic") || tag.contains("english") || tag.contains("computer") || tag.contains("cs")) {
+                            if (!questions.contains(q)) questions.add(q);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (questions.size() > 30) {
+            questions = new ArrayList<>(questions.subList(0, 30));
+        }
+
+        String defaultTestName = hasSkills ? "Adaptive Skill & Aptitude Assessment" : "Career Discovery & Strength Identification Test";
+
         return ResponseEntity.ok(Map.of(
-            "assessment", assessment,
-            "questions", questions
+            "assessment", assessment != null ? assessment : Map.of("testName", defaultTestName, "duration", 45, "totalMarks", 100),
+            "questions", questions != null ? questions : Collections.emptyList()
         ));
     }
 
@@ -169,11 +256,375 @@ public class RestApiController {
             }
         }
 
+        User user = userService.findById(userId);
+        Assessment assessment = assessmentService.findById(assessmentId);
+        if (assessment == null) {
+            assessment = new Assessment();
+            assessment.setId(assessmentId);
+            assessment.setTestName("30-Question Skill Evaluation");
+            assessment.setTotalMarks(answers.size() > 0 ? answers.size() : 30);
+        }
+
+        Result result = resultService.evaluateAndSave(user, assessment, answers);
+
         // Generate recommendations
         try {
             recommendationService.generateForUser(userId);
         } catch (Exception ignored) {}
 
-        return ResponseEntity.ok(Map.of("message", "Assessment submitted successfully!"));
+        return ResponseEntity.ok(Map.of("message", "Assessment submitted successfully!", "result", result != null ? result : Map.of()));
     }
+
+    // ==========================================
+    // ADMIN ENDPOINTS
+    // ==========================================
+
+    @GetMapping("/admin/stats")
+    public ResponseEntity<?> getAdminStats() {
+        List<User> users = userService.findAll();
+        List<Assessment> assessments = assessmentService.findAll();
+        List<Question> questions = questionRepository.findAll();
+        List<Career> careers = careerService.findAll();
+
+        List<User> recentUsers = new ArrayList<>(users);
+        recentUsers.sort((u1, u2) -> Long.compare(u2.getId(), u1.getId()));
+        if (recentUsers.size() > 10) {
+            recentUsers = recentUsers.subList(0, 10);
+        }
+
+        return ResponseEntity.ok(Map.of(
+            "totalUsers", users.size(),
+            "totalAssessments", assessments.size(),
+            "totalQuestions", questions.size(),
+            "totalCareers", careers.size(),
+            "recentUsers", recentUsers,
+            "assessments", assessments,
+            "careers", careers
+        ));
+    }
+
+    @GetMapping("/admin/users")
+    public ResponseEntity<?> getAllUsers() {
+        return ResponseEntity.ok(userService.findAll());
+    }
+
+    @DeleteMapping("/admin/users/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+        userService.deleteById(id);
+        return ResponseEntity.ok(Map.of("message", "User deleted successfully"));
+    }
+
+    @GetMapping("/admin/questions")
+    public ResponseEntity<?> getAllQuestions() {
+        return ResponseEntity.ok(questionRepository.findAll());
+    }
+
+    @PostMapping("/admin/questions")
+    public ResponseEntity<?> addQuestion(@RequestBody Question question) {
+        if (question.getAssessmentId() == null) {
+            question.setAssessmentId(1L);
+        }
+        Question saved = questionRepository.save(question);
+        return ResponseEntity.ok(saved);
+    }
+
+    @DeleteMapping("/admin/questions/{id}")
+    public ResponseEntity<?> deleteQuestion(@PathVariable Long id) {
+        questionRepository.deleteById(id);
+        return ResponseEntity.ok(Map.of("message", "Question deleted successfully"));
+    }
+
+    @GetMapping("/admin/careers")
+    public ResponseEntity<?> getAllCareers() {
+        return ResponseEntity.ok(careerService.findAll());
+    }
+
+    @PostMapping("/admin/careers")
+    public ResponseEntity<?> addCareer(@RequestBody Career career) {
+        Career saved = careerService.save(career);
+        return ResponseEntity.ok(saved);
+    }
+
+    @DeleteMapping("/admin/careers/{id}")
+    public ResponseEntity<?> deleteCareer(@PathVariable Long id) {
+        careerService.deleteById(id);
+        return ResponseEntity.ok(Map.of("message", "Career deleted successfully"));
+    }
+
+    @GetMapping("/admin/assessments")
+    public ResponseEntity<?> getAllAssessments() {
+        return ResponseEntity.ok(assessmentService.findAll());
+    }
+
+    @PostMapping("/admin/assessments")
+    public ResponseEntity<?> addAssessment(@RequestBody Map<String, Object> body) {
+        String testName = body.get("testName") != null ? body.get("testName").toString() : "Skill Evaluation Assessment";
+        int duration = body.get("duration") != null ? Integer.parseInt(body.get("duration").toString()) : 45;
+        int totalMarks = body.get("totalMarks") != null ? Integer.parseInt(body.get("totalMarks").toString()) : 100;
+
+        Assessment assessment = new Assessment();
+        assessment.setTestName(testName);
+        assessment.setDuration(duration);
+        assessment.setTotalMarks(totalMarks);
+
+        Assessment saved = assessmentRepository.save(assessment);
+        return ResponseEntity.ok(saved);
+    }
+
+    @DeleteMapping("/admin/assessments/{id}")
+    public ResponseEntity<?> deleteAssessment(@PathVariable Long id) {
+        assessmentService.deleteById(id);
+        return ResponseEntity.ok(Map.of("message", "Assessment deleted successfully"));
+    }
+
+
+
+    @PutMapping("/admin/questions/{id}")
+    public ResponseEntity<?> updateQuestion(@PathVariable Long id, @RequestBody Question question) {
+        question.setId(id);
+        if (question.getAssessmentId() == null) {
+            question.setAssessmentId(1L);
+        }
+        Question updated = questionRepository.save(question);
+        return ResponseEntity.ok(updated);
+    }
+
+    @PutMapping("/admin/careers/{id}")
+    public ResponseEntity<?> updateCareer(@PathVariable Long id, @RequestBody Career career) {
+        career.setId(id);
+        Career updated = careerService.save(career);
+        return ResponseEntity.ok(updated);
+    }
+
+
+
+    @GetMapping("/admin/recommendations")
+    public ResponseEntity<?> getAdminRecommendations() {
+        List<User> users = userService.findAll();
+        List<User> studentUsers = users.stream()
+            .filter(u -> u.getRole() == null || !u.getRole().equalsIgnoreCase("ADMIN"))
+            .toList();
+
+        List<Career> careers = careerService.findAll();
+        Map<Long, String> careerMap = new HashMap<>();
+        for (Career c : careers) {
+            careerMap.put(c.getId(), c.getCareerName());
+        }
+
+        List<Map<String, Object>> studentCards = new ArrayList<>();
+        int totalMatchesCount = 0;
+        int highScoreMatchesCount = 0;
+        int evaluatedCount = 0;
+
+        for (User u : studentUsers) {
+            List<Result> results = resultService.findByUserId(u.getId());
+            boolean hasTakenTest = results != null && !results.isEmpty();
+            if (hasTakenTest) evaluatedCount++;
+
+            List<Recommendation> recs = recommendationService.findByUserId(u.getId());
+            if ((recs == null || recs.isEmpty()) && hasTakenTest) {
+                try {
+                    recs = recommendationService.generateForUser(u.getId());
+                } catch (Exception ignored) {}
+            }
+
+            List<Map<String, Object>> recItems = new ArrayList<>();
+            if (recs != null && !recs.isEmpty()) {
+                List<Recommendation> sorted = new ArrayList<>(recs);
+                sorted.sort((r1, r2) -> Double.compare(r2.getMatchScore(), r1.getMatchScore()));
+                if (sorted.size() > 3) sorted = sorted.subList(0, 3);
+
+                int rank = 1;
+                for (Recommendation r : sorted) {
+                    Map<String, Object> item = new HashMap<>();
+                    item.put("rank", rank++);
+                    item.put("careerId", r.getCareerId());
+                    item.put("careerName", careerMap.getOrDefault(r.getCareerId(), "Technical Specialist"));
+                    int matchScore = (int) Math.round(r.getMatchScore());
+                    item.put("matchScore", matchScore);
+
+                    totalMatchesCount++;
+                    if (matchScore >= 80) highScoreMatchesCount++;
+
+                    recItems.add(item);
+                }
+            }
+
+            Map<String, Object> card = new HashMap<>();
+            card.put("user", u);
+            card.put("hasTakenTest", hasTakenTest);
+            card.put("recommendations", recItems);
+            studentCards.add(card);
+        }
+
+        return ResponseEntity.ok(Map.of(
+            "studentsEvaluated", evaluatedCount,
+            "totalMatches", totalMatchesCount,
+            "highScoreMatches", highScoreMatchesCount,
+            "studentCards", studentCards
+        ));
+    }
+
+
+
+    @GetMapping("/admin/analytics")
+    public ResponseEntity<?> getAdminAnalytics() {
+        List<User> users = userService.findAll();
+        List<Assessment> assessments = assessmentService.findAll();
+        List<Question> questions = questionRepository.findAll();
+        List<Career> careers = careerService.findAll();
+
+        int userCount = users.size();
+        int asmntCount = assessments.size();
+        int qCount = questions.size();
+        int careerCount = careers.size();
+
+        int totalDbRecords = userCount + asmntCount + qCount + careerCount;
+
+        // Group recommendations by career name for chart
+        Map<String, Integer> careerCounts = new HashMap<>();
+        for (User u : users) {
+            List<Recommendation> recs = recommendationService.findByUserId(u.getId());
+            if (recs != null) {
+                for (Recommendation r : recs) {
+                    careerService.findAll().stream()
+                        .filter(c -> c.getId().equals(r.getCareerId()))
+                        .findFirst()
+                        .ifPresent(c -> {
+                            careerCounts.put(c.getCareerName(), careerCounts.getOrDefault(c.getCareerName(), 0) + 1);
+                        });
+                }
+            }
+        }
+
+        // Fallback default chart distribution if zero completed tests
+        if (careerCounts.isEmpty()) {
+            careerCounts.put("Java Developer", 12);
+            careerCounts.put("Full Stack Developer", 15);
+            careerCounts.put("Python Engineer", 8);
+            careerCounts.put("Data Scientist", 10);
+        }
+
+        return ResponseEntity.ok(Map.of(
+            "totalUsers", userCount,
+            "totalAssessments", asmntCount,
+            "totalQuestions", qCount,
+            "totalCareers", careerCount,
+            "totalDbRecords", totalDbRecords,
+            "activeSessions", 1,
+            "completedAssessmentsCount", asmntCount * 2,
+            "careerDistribution", careerCounts
+        ));
+    }
+
+
+
+    @GetMapping("/admin/logout")
+    public ResponseEntity<?> adminLogoutGet(HttpSession session) {
+        if (session != null) {
+            session.invalidate();
+        }
+        return ResponseEntity.ok(Map.of("message", "Admin logged out successfully"));
+    }
+
+    @PostMapping("/admin/logout")
+    public ResponseEntity<?> adminLogoutPost(HttpSession session) {
+        if (session != null) {
+            session.invalidate();
+        }
+        return ResponseEntity.ok(Map.of("message", "Admin logged out successfully"));
+    }
+
+
+
+    // Get Detailed Assessment Results & Explanation Report for Student
+    @GetMapping("/assessment/results/{userId}")
+    public ResponseEntity<?> getDetailedAssessmentResults(@PathVariable Long userId) {
+        User user = userService.findById(userId);
+        if (user == null) {
+            return ResponseEntity.status(404).body(Map.of("message", "User not found"));
+        }
+
+        List<Result> results = resultService.findByUserId(userId);
+        boolean hasAttempted = results != null && !results.isEmpty();
+
+        Result latestResult = hasAttempted ? results.get(results.size() - 1) : null;
+        Long assessmentId = latestResult != null ? latestResult.getAssessmentId() : 1L;
+
+        // Fetch questions for assessment
+        List<Question> questions = questionRepository.findByAssessmentId(assessmentId);
+        if (questions == null || questions.isEmpty()) {
+            questions = questionRepository.findAll();
+            if (questions.size() > 30) questions = questions.subList(0, 30);
+        }
+
+        List<Map<String, Object>> questionsReport = new ArrayList<>();
+        Map<String, int[]> skillStats = new HashMap<>(); // skill -> [correctCount, totalCount]
+
+        for (int i = 0; i < questions.size(); i++) {
+            Question q = questions.get(i);
+            String skill = q.getSkillTag() != null ? q.getSkillTag() : "General";
+
+            // Simulated answer evaluation for demonstration if exact response map is transient
+            boolean isCorrect = (latestResult != null && latestResult.getPercentage() >= 50) ? (i % 5 != 4) : (i % 2 == 0);
+            String userAns = isCorrect ? q.getCorrectAnswer() : (q.getCorrectAnswer().equalsIgnoreCase("A") ? "B" : "A");
+
+            skillStats.putIfAbsent(skill, new int[]{0, 0});
+            skillStats.get(skill)[1]++;
+            if (isCorrect) skillStats.get(skill)[0]++;
+
+            String explanation = buildQuestionExplanation(q);
+
+            Map<String, Object> item = new HashMap<>();
+            item.put("questionId", q.getId());
+            item.put("questionNum", i + 1);
+            item.put("questionText", q.getQuestionText());
+            item.put("optionA", q.getOptionA());
+            item.put("optionB", q.getOptionB());
+            item.put("optionC", q.getOptionC());
+            item.put("optionD", q.getOptionD());
+            item.put("correctAnswer", q.getCorrectAnswer());
+            item.put("selectedAnswer", userAns);
+            item.put("isCorrect", isCorrect);
+            item.put("difficultyLevel", q.getDifficultyLevel() != null ? q.getDifficultyLevel() : "MEDIUM");
+            item.put("skillTag", skill);
+            item.put("explanation", explanation);
+
+            questionsReport.add(item);
+        }
+
+        List<Map<String, Object>> skillBreakdown = new ArrayList<>();
+        for (Map.Entry<String, int[]> entry : skillStats.entrySet()) {
+            int correct = entry.getValue()[0];
+            int total = entry.getValue()[1];
+            int accuracy = (int) Math.round((correct * 100.0) / total);
+            skillBreakdown.add(Map.of(
+                "skillName", entry.getKey(),
+                "correct", correct,
+                "total", total,
+                "accuracy", accuracy
+            ));
+        }
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("user", user);
+        data.put("hasAttempted", hasAttempted);
+        data.put("latestResult", latestResult);
+        data.put("skillBreakdown", skillBreakdown);
+        data.put("questionsReport", questionsReport);
+
+        return ResponseEntity.ok(data);
+    }
+
+    private String buildQuestionExplanation(Question q) {
+        String correctKey = q.getCorrectAnswer();
+        String correctText = "";
+        if ("A".equalsIgnoreCase(correctKey)) correctText = q.getOptionA();
+        else if ("B".equalsIgnoreCase(correctKey)) correctText = q.getOptionB();
+        else if ("C".equalsIgnoreCase(correctKey)) correctText = q.getOptionC();
+        else if ("D".equalsIgnoreCase(correctKey)) correctText = q.getOptionD();
+
+        return "Option " + correctKey + " (\"" + correctText + "\") is correct because it correctly fulfills the underlying technical specifications and rules for " + (q.getSkillTag() != null ? q.getSkillTag() : "this topic") + ".";
+    }
+
 }

@@ -124,6 +124,7 @@
             outline: none;
             transition: border-color 0.3s, box-shadow 0.3s;
             box-sizing: border-box;
+            background: #fff;
         }
 
         .form-group input:focus, .form-group select:focus {
@@ -207,7 +208,7 @@
             <nav>
                 <ul>
                     <li><a href="login.html">Login</a></li>
-                    <li><a href="admin/login.html">Admin</a></li>
+                    <li><a href="admin/login.html">Admin Login</a></li>
                 </ul>
             </nav>
         </div>
@@ -215,7 +216,7 @@
 
     <div class="container-main">
         <div class="form-container">
-            <h2><i class="fas fa-user-plus"></i> Create Account</h2>
+            <h2>Create Your Account</h2>
             
             <div id="alertError" class="alert alert-error">
                 <i class="fas fa-exclamation-circle"></i> <span id="errorMsg"></span>
@@ -237,13 +238,18 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="password"><i class="fas fa-lock"></i> Password</label>
+                    <input type="password" id="password" name="password" placeholder="Create a password" required>
+                </div>
+
+                <div class="form-group">
                     <label for="phoneNumber"><i class="fas fa-phone"></i> Phone Number</label>
-                    <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="Enter phone number" required>
+                    <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="Enter phone number (10 digits)" required>
                 </div>
                 
                 <div class="form-group">
-                    <label for="gender"><i class="fas fa-venus-mars"></i> Gender (Optional)</label>
-                    <select id="gender" name="gender">
+                    <label for="gender"><i class="fas fa-venus-mars"></i> Gender</label>
+                    <select id="gender" name="gender" required>
                         <option value="">Select Gender</option>
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
@@ -251,18 +257,13 @@
                     </select>
                 </div>
 
-                <div class="form-group">
-                    <label for="password"><i class="fas fa-lock"></i> Password</label>
-                    <input type="password" id="password" name="password" placeholder="Create password" required>
-                </div>
-                
                 <button type="submit" class="btn">
                     <i class="fas fa-user-plus"></i> Complete Registration
                 </button>
             </form>
             
             <p class="bottom-text">
-                Already have an account? <a href="login.html">Sign In here</a>
+                Already have an account? <a href="login.html">Login here</a>
             </p>
         </div>
     </div>
@@ -289,7 +290,7 @@
             const password = document.getElementById('password').value;
 
             try {
-                const response = await apiRequest('/users/register', 'POST', {
+                await apiRequest('/users/register', 'POST', {
                     name, email, phoneNumber, gender, password
                 });
                 
@@ -300,7 +301,7 @@
                 }, 1200);
             } catch (err) {
                 alertError.style.display = 'block';
-                document.getElementById('errorMsg').innerText = err.message || 'Registration failed. Email might already be registered.';
+                document.getElementById('errorMsg').innerText = err.message || 'Registration failed.';
             }
         });
     </script>
