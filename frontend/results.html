@@ -15,6 +15,7 @@
 	--success: #10b981;
 	--danger: #ef4444;
 	--warning: #f59e0b;
+	--neutral: #64748b;
 	--bg: #f8fafc;
 	--white: #ffffff;
 	--text: #0f172a;
@@ -104,6 +105,25 @@ body.student-body {
 	align-items: center;
 }
 
+.admin-user-info {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.admin-user-avatar {
+	width: 42px;
+	height: 42px;
+	border-radius: 50%;
+	background: var(--primary-cyan);
+	color: #000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: 700;
+	font-size: 1.1rem;
+}
+
 .admin-content {
 	padding: 35px;
 	flex: 1;
@@ -156,14 +176,15 @@ body.student-body {
 /* Filter Bar */
 .filter-tabs {
 	display: flex;
-	gap: 10px;
+	gap: 8px;
 	margin-bottom: 25px;
+	flex-wrap: wrap;
 }
 
 .tab-btn {
 	background: var(--white);
 	border: 1px solid var(--border);
-	padding: 8px 18px;
+	padding: 8px 16px;
 	border-radius: 20px;
 	font-weight: 600;
 	font-size: 0.88rem;
@@ -193,6 +214,10 @@ body.student-body {
 
 .question-review-card.incorrect-card {
 	border-left: 5px solid var(--danger);
+}
+
+.question-review-card.unattempted-card {
+	border-left: 5px solid #94a3b8;
 }
 
 .options-grid {
@@ -240,6 +265,26 @@ body.student-body {
 	color: #166534;
 	margin-top: 15px;
 }
+
+.empty-state {
+	text-align: center;
+	padding: 60px 30px;
+	background: var(--white);
+	border-radius: 16px;
+	border: 1px solid var(--border);
+}
+
+.btn-cyan {
+	background: var(--primary-cyan);
+	color: #000;
+	padding: 12px 28px;
+	border-radius: 10px;
+	font-weight: 700;
+	text-decoration: none;
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+}
 </style>
 <link rel="stylesheet" href="css/brand-system.css">
 </head>
@@ -263,8 +308,14 @@ body.student-body {
 
 	<main class="admin-main">
 		<header class="admin-header">
-			<h2><i class="fas fa-poll-h" style="color:var(--primary-cyan);"></i> Detailed Assessment Results & Learning Report</h2>
-			<a href="dashboard.html" style="text-decoration:none; color:var(--primary-hover); font-weight:600;"><i class="fas fa-arrow-left"></i> Dashboard</a>
+			<h2 style="margin:0; font-size:1.35rem; color:var(--bg-dark-blue);"><i class="fas fa-poll-h" style="color:var(--primary-cyan);"></i> Detailed Assessment Results & Learning Report</h2>
+			<div class="admin-user-info">
+				<div class="admin-user-avatar" id="headerUserAvatar"><i class="fas fa-user"></i></div>
+				<div>
+					<span class="admin-user-name" style="font-weight:600; color:var(--bg-dark-blue);">Student</span>
+				</div>
+				<a href="#" onclick="logoutUser()" style="margin-left:15px; color:var(--danger); text-decoration:none; font-weight:600;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+			</div>
 		</header>
 
 		<div class="admin-content">
@@ -276,11 +327,11 @@ body.student-body {
 				</div>
 				<div class="summary-card">
 					<h3 id="resCorrectCount">-- / 30</h3>
-					<p>Correctly Answered Questions</p>
+					<p>Correct Answers Score</p>
 				</div>
 				<div class="summary-card">
-					<h3 id="resGradeBadge" style="color:var(--primary-hover); font-size:1.4rem;">--</h3>
-					<p>Overall Performance Mastery</p>
+					<h3 id="resAttemptSummary" style="color:var(--primary-hover); font-size:1.25rem;">--</h3>
+					<p>Attempted vs Unattempted Breakdown</p>
 				</div>
 			</div>
 
@@ -292,9 +343,10 @@ body.student-body {
 			<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
 				<h3 style="margin:0; color:var(--bg-dark-blue); font-size:1.1rem;"><i class="fas fa-list-check" style="color:var(--primary-cyan);"></i> Question-by-Question Solution Review & Explanations</h3>
 				<div class="filter-tabs">
-					<button class="tab-btn active" onclick="filterQuestions('ALL', this)">All (30)</button>
-					<button class="tab-btn" onclick="filterQuestions('CORRECT', this)">Correct Answers</button>
-					<button class="tab-btn" onclick="filterQuestions('INCORRECT', this)">Incorrect Answers</button>
+					<button class="tab-btn active" id="btnFilterAll" onclick="filterQuestions('ALL', this)">All Questions (30)</button>
+					<button class="tab-btn" id="btnFilterCorrect" onclick="filterQuestions('CORRECT', this)">Correct</button>
+					<button class="tab-btn" id="btnFilterIncorrect" onclick="filterQuestions('INCORRECT', this)">Incorrect</button>
+					<button class="tab-btn" id="btnFilterUnattempted" onclick="filterQuestions('UNATTEMPTED', this)">Unattempted</button>
 				</div>
 			</div>
 
@@ -314,103 +366,152 @@ function filterQuestions(type, btn) {
 
     const cards = document.querySelectorAll('.question-review-card');
     cards.forEach(card => {
-        const isCorr = card.getAttribute('data-correct') === 'true';
+        const status = card.getAttribute('data-status');
         if (type === 'ALL') {
             card.style.display = 'block';
-        } else if (type === 'CORRECT') {
-            card.style.display = isCorr ? 'block' : 'none';
-        } else if (type === 'INCORRECT') {
-            card.style.display = !isCorr ? 'block' : 'none';
+        } else if (type === status) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
         }
     });
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const userStr = localStorage.getItem('user');
-    const user = userStr ? JSON.parse(userStr) : null;
-    const userId = user ? user.id : 1;
+    const user = requireAuth();
+    if (!user) return;
+    const userId = user.id;
+
+    // Header User Avatar & Name
+    const avatarEl = document.getElementById('headerUserAvatar');
+    if (avatarEl && user.name) avatarEl.innerText = user.name.charAt(0).toUpperCase();
+    document.querySelectorAll('.admin-user-name').forEach(el => el.innerText = user.name || 'Student');
 
     try {
         const data = await apiRequest(`/v1/assessment/results/${userId}`);
-        if (data) {
-            const hasAttempted = data.hasAttempted;
-            const res = data.latestResult;
+        const qContainer = document.getElementById('questionsReviewContainer');
+        const skillContainer = document.getElementById('skillsBreakdownContainer');
 
-            if (hasAttempted && res) {
-                const pct = Math.round(res.percentage || 0);
-                document.getElementById('resScorePct').innerText = pct + '%';
-                document.getElementById('resCorrectCount').innerText = `${res.score} / 30`;
+        if (!data || !data.hasAttempted) {
+            document.getElementById('resScorePct').innerText = 'N/A';
+            document.getElementById('resCorrectCount').innerText = '0 / 30';
+            document.getElementById('resAttemptSummary').innerText = 'Pending Test';
 
-                let grade = 'Good Performance';
-                if (pct >= 80) grade = 'Mastery (Level A)';
-                else if (pct < 60) grade = 'Needs Review';
-                document.getElementById('resGradeBadge').innerText = grade;
-            } else {
-                document.getElementById('resScorePct').innerText = '0%';
-                document.getElementById('resCorrectCount').innerText = '0 / 30';
-                document.getElementById('resGradeBadge').innerText = 'Pending Attempt';
+            if (skillContainer) {
+                skillContainer.innerHTML = `<div style="color:var(--text-muted); font-size:0.9rem; grid-column: 1 / -1;">No skill accuracy data available until assessment is completed.</div>`;
             }
 
-            // Skill Breakdown
-            const skillContainer = document.getElementById('skillsBreakdownContainer');
-            if (skillContainer && data.skillBreakdown && data.skillBreakdown.length > 0) {
-                skillContainer.innerHTML = data.skillBreakdown.map(s => `
-                    <div class="skill-acc-card">
-                        <div style="display:flex; justify-content:space-between; font-weight:700; margin-bottom:6px;">
-                            <span>${s.skillName}</span>
-                            <span style="color:var(--primary-hover);">${s.accuracy}%</span>
+            if (qContainer) {
+                qContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div style="width: 70px; height: 70px; border-radius: 50%; background: rgba(34,211,238,0.15); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto;">
+                            <i class="fas fa-clock" style="font-size: 2.2rem; color: var(--primary-cyan);"></i>
                         </div>
-                        <div style="font-size:0.8rem; color:var(--text-muted);">${s.correct} of ${s.total} Correct</div>
+                        <h2 style="color: var(--bg-dark-blue); margin-bottom: 10px; font-weight: 700;">No Assessment Test Attempted Yet</h2>
+                        <p style="color: var(--text-muted); max-width: 550px; margin: 0 auto 25px auto; font-size: 0.95rem; line-height: 1.65;">
+                            You have not taken any skill assessment test yet. Complete your 30-question evaluation to view your percentage score, skill-by-skill accuracy breakdown, and detailed question explanations!
+                        </p>
+                        <a href="take-assessment.html?id=1" class="btn-cyan">
+                            <i class="fas fa-play-circle"></i> Start Assessment Test Now
+                        </a>
                     </div>
-                `).join('');
+                `;
             }
+            return;
+        }
 
-            // Questions Report
-            const qContainer = document.getElementById('questionsReviewContainer');
-            if (qContainer && data.questionsReport && data.questionsReport.length > 0) {
-                allQuestionsReport = data.questionsReport;
-                qContainer.innerHTML = data.questionsReport.map(q => {
-                    const isCorr = q.isCorrect;
-                    const cardClass = isCorr ? 'correct-card' : 'incorrect-card';
-                    const statusBadge = isCorr ?
-                        `<span style="background:rgba(16,185,129,0.15); color:#10b981; padding:4px 12px; border-radius:12px; font-weight:700; font-size:0.8rem;"><i class="fas fa-check-circle"></i> Correct</span>` :
-                        `<span style="background:rgba(239,68,68,0.15); color:#ef4444; padding:4px 12px; border-radius:12px; font-weight:700; font-size:0.8rem;"><i class="fas fa-times-circle"></i> Incorrect</span>`;
+        // 100% Dynamic Attempt Data from Backend API
+        const res = data.latestResult || {};
+        const scoreVal = (res.score !== undefined && res.score !== null) ? res.score : 0;
+        const pctVal = (res.percentage !== undefined && res.percentage !== null) ? Math.round(res.percentage) : Math.round((scoreVal / 30) * 100);
 
-                    const getBoxClass = (key) => {
-                        if (q.selectedAnswer === key && q.correctAnswer === key) return 'option-box selected-correct';
-                        if (q.selectedAnswer === key && q.correctAnswer !== key) return 'option-box selected-wrong';
+        const answeredCount = data.answeredCount || 0;
+        const unattemptedCount = data.unattemptedCount || (30 - answeredCount);
+        const correctCount = data.correctCount || scoreVal;
+
+        document.getElementById('resScorePct').innerText = pctVal + '%';
+        document.getElementById('resCorrectCount').innerText = `${correctCount} / 30`;
+        document.getElementById('resAttemptSummary').innerText = `${answeredCount} Solved | ${unattemptedCount} Skipped`;
+
+        // Update Filter Tabs with counts
+        document.getElementById('btnFilterAll').innerText = `All Questions (30)`;
+        document.getElementById('btnFilterCorrect').innerText = `Correct (${correctCount})`;
+        document.getElementById('btnFilterIncorrect').innerText = `Incorrect (${answeredCount - correctCount})`;
+        document.getElementById('btnFilterUnattempted').innerText = `Unattempted (${unattemptedCount})`;
+
+        // Skill Breakdown
+        if (skillContainer && data.skillBreakdown && data.skillBreakdown.length > 0) {
+            skillContainer.innerHTML = data.skillBreakdown.map(s => `
+                <div class="skill-acc-card">
+                    <div style="display:flex; justify-content:space-between; font-weight:700; margin-bottom:6px;">
+                        <span>${s.skillName}</span>
+                        <span style="color:var(--primary-hover);">${s.accuracy}%</span>
+                    </div>
+                    <div style="font-size:0.8rem; color:var(--text-muted);">${s.correct} of ${s.total} Correct</div>
+                </div>
+            `).join('');
+        }
+
+        // Questions Report
+        if (qContainer && data.questionsReport && data.questionsReport.length > 0) {
+            allQuestionsReport = data.questionsReport;
+            qContainer.innerHTML = data.questionsReport.map(q => {
+                const status = q.status; // "CORRECT", "INCORRECT", "UNATTEMPTED"
+                let cardClass = 'unattempted-card';
+                let statusBadge = `<span style="background:rgba(100,116,139,0.15); color:#64748b; padding:4px 12px; border-radius:12px; font-weight:700; font-size:0.8rem;"><i class="fas fa-minus-circle"></i> Unattempted</span>`;
+
+                if (status === 'CORRECT') {
+                    cardClass = 'correct-card';
+                    statusBadge = `<span style="background:rgba(16,185,129,0.15); color:#10b981; padding:4px 12px; border-radius:12px; font-weight:700; font-size:0.8rem;"><i class="fas fa-check-circle"></i> Correct</span>`;
+                } else if (status === 'INCORRECT') {
+                    cardClass = 'incorrect-card';
+                    statusBadge = `<span style="background:rgba(239,68,68,0.15); color:#ef4444; padding:4px 12px; border-radius:12px; font-weight:700; font-size:0.8rem;"><i class="fas fa-times-circle"></i> Incorrect</span>`;
+                }
+
+                const getBoxClass = (key) => {
+                    if (status === 'UNATTEMPTED') {
+                        // For unattempted questions, NEVER highlight any selected option! Only highlight actual correct option
                         if (q.correctAnswer === key) return 'option-box actual-correct';
                         return 'option-box';
-                    };
+                    }
+                    if (q.selectedAnswer === key && q.correctAnswer === key) return 'option-box selected-correct';
+                    if (q.selectedAnswer === key && q.correctAnswer !== key) return 'option-box selected-wrong';
+                    if (q.correctAnswer === key) return 'option-box actual-correct';
+                    return 'option-box';
+                };
 
-                    return `
-                        <div class="question-review-card ${cardClass}" data-correct="${isCorr}">
-                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                                <div style="font-weight:700; color:var(--bg-dark-blue); font-size:1.05rem;">
-                                    Q${q.questionNum}. ${q.questionText}
-                                </div>
-                                <div>${statusBadge}</div>
-                            </div>
-                            <div style="display:flex; gap:8px; margin-bottom:12px;">
-                                <span style="background:rgba(34,211,238,0.15); color:var(--primary-hover); padding:3px 10px; border-radius:10px; font-size:0.78rem; font-weight:600;">${q.skillTag}</span>
-                                <span style="background:rgba(100,116,139,0.1); color:var(--text-muted); padding:3px 10px; border-radius:10px; font-size:0.78rem; font-weight:600;">${q.difficultyLevel}</span>
-                            </div>
+                const userAnsLabel = status === 'UNATTEMPTED' ? 
+                    `<span style="color:var(--text-muted); font-style:italic;">Not Answered</span>` : 
+                    `Option ${q.selectedAnswer}`;
 
-                            <div class="options-grid">
-                                <div class="${getBoxClass('A')}">A: ${q.optionA || '-'}</div>
-                                <div class="${getBoxClass('B')}">B: ${q.optionB || '-'}</div>
-                                <div class="${getBoxClass('C')}">C: ${q.optionC || '-'}</div>
-                                <div class="${getBoxClass('D')}">D: ${q.optionD || '-'}</div>
+                return `
+                    <div class="question-review-card ${cardClass}" data-status="${status}">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                            <div style="font-weight:700; color:var(--bg-dark-blue); font-size:1.05rem;">
+                                Q${q.questionNum}. ${q.questionText}
                             </div>
-
-                            <div class="explanation-box">
-                                <strong style="display:block; margin-bottom:4px;"><i class="fas fa-lightbulb"></i> Concept Explanation & Answer Key Note:</strong>
-                                ${q.explanation}
-                            </div>
+                            <div>${statusBadge}</div>
                         </div>
-                    `;
-                }).join('');
-            }
+                        <div style="display:flex; gap:8px; margin-bottom:12px; align-items:center;">
+                            <span style="background:rgba(34,211,238,0.15); color:var(--primary-hover); padding:3px 10px; border-radius:10px; font-size:0.78rem; font-weight:600;">${q.skillTag}</span>
+                            <span style="background:rgba(100,116,139,0.1); color:var(--text-muted); padding:3px 10px; border-radius:10px; font-size:0.78rem; font-weight:600;">${q.difficultyLevel}</span>
+                            <span style="font-size:0.82rem; margin-left:auto; font-weight:600; color:var(--bg-dark-blue);">Your Answer: ${userAnsLabel}</span>
+                        </div>
+
+                        <div class="options-grid">
+                            <div class="${getBoxClass('A')}">A: ${q.optionA || '-'}</div>
+                            <div class="${getBoxClass('B')}">B: ${q.optionB || '-'}</div>
+                            <div class="${getBoxClass('C')}">C: ${q.optionC || '-'}</div>
+                            <div class="${getBoxClass('D')}">D: ${q.optionD || '-'}</div>
+                        </div>
+
+                        <div class="explanation-box">
+                            <strong style="display:block; margin-bottom:4px;"><i class="fas fa-lightbulb"></i> Concept Explanation & Answer Key Note:</strong>
+                            ${q.explanation}
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
     } catch (err) {
         console.log('Results page loaded');

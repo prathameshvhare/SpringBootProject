@@ -7,6 +7,7 @@ public class Result {
     private Long assessmentId;
     private Integer score;
     private Double percentage;
+    private String userAnswersJson;
 
     public Result() {
     }
@@ -49,5 +50,13 @@ public class Result {
 
     public void setPercentage(Double percentage) {
         this.percentage = percentage;
+    }
+
+    public String getUserAnswersJson() {
+        return userAnswersJson;
+    }
+
+    public void setUserAnswersJson(String userAnswersJson) {
+        this.userAnswersJson = userAnswersJson;
     }
 }

@@ -19,20 +19,27 @@ public class ResultRepository {
 
     public ResultRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-        this.resultRowMapper = (rs, rowNum) -> {
+                this.resultRowMapper = (rs, rowNum) -> {
             Result result = new Result();
             result.setId(rs.getLong("id"));
             result.setUserId(rs.getLong("user_id"));
             result.setAssessmentId(rs.getLong("assessment_id"));
             result.setScore(rs.getInt("score"));
             result.setPercentage(rs.getDouble("percentage"));
+            try {
+                result.setUserAnswersJson(rs.getString("user_answers_json"));
+            } catch (Exception ignored) {}
             return result;
         };
     }
 
-    public Result save(Result result) {
+        public Result save(Result result) {
+        try {
+            jdbcTemplate.execute("ALTER TABLE results ADD COLUMN user_answers_json TEXT;");
+        } catch (Exception ignored) {}
+
         if (result.getId() == null) {
-            String sql = "INSERT INTO results (user_id, assessment_id, score, percentage) VALUES (?, ?, ?, ?)";
+            String sql = "INSERT INTO results (user_id, assessment_id, score, percentage, user_answers_json) VALUES (?, ?, ?, ?, ?)";
             KeyHolder keyHolder = new GeneratedKeyHolder();
             jdbcTemplate.update(connection -> {
                 PreparedStatement ps = connection.prepareStatement(sql, new String[]{"id"});
@@ -40,13 +47,14 @@ public class ResultRepository {
                 ps.setLong(2, result.getAssessmentId());
                 ps.setInt(3, result.getScore());
                 ps.setDouble(4, result.getPercentage());
+                ps.setString(5, result.getUserAnswersJson());
                 return ps;
             }, keyHolder);
             result.setId(keyHolder.getKey().longValue());
             return result;
         } else {
-            String sql = "UPDATE results SET user_id = ?, assessment_id = ?, score = ?, percentage = ? WHERE id = ?";
-            jdbcTemplate.update(sql, result.getUserId(), result.getAssessmentId(), result.getScore(), result.getPercentage(), result.getId());
+            String sql = "UPDATE results SET user_id = ?, assessment_id = ?, score = ?, percentage = ?, user_answers_json = ? WHERE id = ?";
+            jdbcTemplate.update(sql, result.getUserId(), result.getAssessmentId(), result.getScore(), result.getPercentage(), result.getUserAnswersJson(), result.getId());
             return findById(result.getId()).orElseThrow();
         }
     }

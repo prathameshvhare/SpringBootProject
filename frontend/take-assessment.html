@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dynamic Proctored Assessment - Smart Career</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<title>Dynamic Skill & Aptitude Assessment Player - Smart Career</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 :root {
@@ -15,41 +15,25 @@
 	--text-dark: #0f172a;
 	--text-muted: #64748b;
 	--border-color: #e2e8f0;
-	--warning-amber: #f59e0b;
-	--danger-red: #ef4444;
 	--success-green: #10b981;
-}
-
-* {
-	margin: 0;
-	padding: 0;
-	box-sizing: border-box;
-}
-
-/* Prevent copy/paste and text selection during assessment */
-body.no-select {
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
+	--danger-red: #ef4444;
 }
 
 body {
 	font-family: 'Poppins', sans-serif;
-	background-color: #f8fafc;
+	background: #f8fafc;
 	color: var(--text-dark);
-	min-height: 100vh;
+	margin: 0;
+	padding: 0;
 }
 
-/* Header Bar */
 .header-bar {
 	background: var(--bg-dark-blue);
 	color: white;
-	padding: 14px 30px;
+	padding: 15px 30px;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	box-shadow: 0 4px 20px rgba(0,0,0,0.1);
 	position: sticky;
 	top: 0;
 	z-index: 100;
@@ -62,8 +46,12 @@ body {
 }
 
 .header-logo {
-	font-size: 1.3rem;
+	font-size: 1.25rem;
 	font-weight: 700;
+	color: white;
+}
+
+.header-logo span {
 	color: var(--primary-cyan);
 }
 
@@ -71,271 +59,203 @@ body {
 	background: rgba(16, 185, 129, 0.15);
 	color: var(--success-green);
 	border: 1px solid rgba(16, 185, 129, 0.3);
-	padding: 4px 12px;
+	padding: 6px 16px;
 	border-radius: 20px;
-	font-size: 0.8rem;
-	font-weight: 600;
-	display: flex;
-	align-items: center;
-	gap: 6px;
-}
-
-.timer-box {
-	background: rgba(255,255,255,0.1);
-	padding: 8px 18px;
-	border-radius: 20px;
+	font-size: 0.85rem;
 	font-weight: 600;
 	display: flex;
 	align-items: center;
 	gap: 8px;
+}
+
+.timer-box {
+	background: rgba(255, 255, 255, 0.1);
+	padding: 8px 18px;
+	border-radius: 12px;
+	font-size: 1.1rem;
+	font-weight: 700;
 	color: var(--primary-cyan);
+	display: flex;
+	align-items: center;
+	gap: 8px;
 }
 
-/* Layout */
 .test-layout {
-	width: min(1200px, 92%);
+	max-width: 1250px;
 	margin: 30px auto;
+	padding: 0 20px;
 	display: grid;
-	grid-template-columns: 1fr 320px;
-	gap: 25px;
-}
-
-.questions-container {
-	min-width: 0;
+	grid-template-columns: 1fr 300px;
+	gap: 30px;
 }
 
 .question-card {
 	background: white;
 	border-radius: 16px;
-	padding: 30px;
-	box-shadow: 0 4px 20px rgba(0,0,0,0.04);
-	border: 1px solid var(--border-color);
+	padding: 28px;
 	margin-bottom: 25px;
-	scroll-margin-top: 90px;
+	border: 1px solid var(--border-color);
+	box-shadow: 0 4px 20px rgba(0,0,0,0.02);
 }
 
 .q-header {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin-bottom: 18px;
+	margin-bottom: 15px;
 }
 
 .q-number {
 	font-weight: 700;
 	color: var(--primary-hover);
-	font-size: 1.05rem;
+	font-size: 0.9rem;
 }
 
 .skill-badge {
-	background: rgba(34, 211, 238, 0.12);
-	color: #0284c7;
+	background: #f1f5f9;
+	color: var(--text-muted);
 	padding: 4px 12px;
-	border-radius: 15px;
+	border-radius: 12px;
 	font-size: 0.8rem;
 	font-weight: 600;
 }
 
 .q-text {
-	font-size: 1.1rem;
+	font-size: 1.05rem;
 	font-weight: 600;
-	margin-bottom: 22px;
+	color: var(--bg-dark-blue);
+	margin-bottom: 20px;
 	line-height: 1.5;
 }
 
 .options-group {
-	display: flex;
-	flex-direction: column;
+	display: grid;
+	grid-template-columns: 1fr;
 	gap: 12px;
 }
 
 .option-label {
-	display: flex;
-	align-items: center;
-	gap: 15px;
-	padding: 16px 20px;
-	border: 1.5px solid var(--border-color);
+	background: #f8fafc;
+	border: 1px solid var(--border-color);
+	padding: 14px 18px;
 	border-radius: 12px;
 	cursor: pointer;
+	display: flex;
+	align-items: center;
+	gap: 12px;
 	transition: all 0.2s ease;
+	font-size: 0.95rem;
 }
 
 .option-label:hover {
+	background: #f1f5f9;
 	border-color: var(--primary-cyan);
-	background: rgba(34, 211, 238, 0.04);
 }
 
 .option-label input[type="radio"] {
 	width: 18px;
 	height: 18px;
-	accent-color: #06b6d4;
+	accent-color: var(--primary-hover);
 }
 
-/* FIXED / STICKY RIGHT SIDEBAR */
 .sidebar-panel {
 	background: white;
 	border-radius: 16px;
-	padding: 25px;
-	box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+	padding: 24px;
 	border: 1px solid var(--border-color);
 	position: sticky;
 	top: 90px;
-	align-self: start;
-	max-height: calc(100vh - 110px);
-	overflow-y: auto;
+	height: fit-content;
 }
 
 .sidebar-panel h3 {
+	margin: 0 0 15px 0;
 	font-size: 1rem;
-	font-weight: 600;
-	margin-bottom: 14px;
+	color: var(--bg-dark-blue);
 	display: flex;
-	align-items: center;
 	justify-content: space-between;
+	align-items: center;
 }
 
 .q-grid {
 	display: grid;
 	grid-template-columns: repeat(5, 1fr);
-	gap: 8px;
-	margin-bottom: 22px;
+	gap: 10px;
+	margin-bottom: 25px;
 }
 
 .q-badge {
-	width: 40px;
-	height: 40px;
-	border-radius: 8px;
+	aspect-ratio: 1;
+	border-radius: 10px;
+	background: #f1f5f9;
 	border: 1px solid var(--border-color);
 	display: flex;
-	justify-content: center;
 	align-items: center;
-	font-weight: 600;
-	font-size: 0.9rem;
-	background: #f8fafc;
-	color: var(--text-dark);
+	justify-content: center;
+	font-weight: 700;
+	font-size: 0.85rem;
+	color: var(--text-muted);
 	cursor: pointer;
 	transition: all 0.2s ease;
 }
 
-.q-badge:hover {
-	border-color: var(--primary-cyan);
-	color: var(--primary-hover);
-}
-
 .q-badge.answered {
-	background: var(--primary-cyan);
-	color: #0a141f;
-	border-color: var(--primary-cyan);
-	font-weight: 700;
+	background: rgba(16, 185, 129, 0.15);
+	color: var(--success-green);
+	border-color: var(--success-green);
 }
 
 .btn-submit-test {
 	width: 100%;
-	padding: 14px;
-	border: none;
-	border-radius: 10px;
 	background: var(--bg-dark-blue);
 	color: white;
+	border: none;
+	padding: 14px;
+	border-radius: 12px;
 	font-weight: 700;
 	font-size: 0.95rem;
 	cursor: pointer;
-	transition: 0.3s;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 8px;
+	transition: background 0.2s ease;
 }
 
 .btn-submit-test:hover {
-	background: #1e293b;
-	transform: translateY(-2px);
+	background: var(--primary-hover);
 }
 
-/* Cooldown Modal / Lock Screen */
 .cooldown-screen {
-	width: min(700px, 90%);
-	margin: 60px auto;
-	background: white;
-	border-radius: 20px;
-	padding: 45px 35px;
 	text-align: center;
-	box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+	max-width: 600px;
+	margin: 80px auto;
+	background: white;
+	padding: 50px 40px;
+	border-radius: 20px;
 	border: 1px solid var(--border-color);
 }
 
 .cooldown-icon {
 	width: 80px;
 	height: 80px;
-	background: rgba(245, 158, 11, 0.15);
-	color: var(--warning-amber);
 	border-radius: 50%;
+	background: rgba(34, 211, 238, 0.15);
+	color: var(--primary-hover);
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	font-size: 2.2rem;
-	margin: 0 auto 20px;
+	font-size: 2.5rem;
+	margin: 0 auto 20px auto;
 }
 
-.cooldown-screen h2 {
-	font-size: 1.6rem;
-	font-weight: 700;
-	color: var(--bg-dark-blue);
-	margin-bottom: 12px;
-}
-
-.cooldown-screen p {
-	color: var(--text-muted);
-	font-size: 0.98rem;
-	line-height: 1.65;
-	margin-bottom: 30px;
-}
-
-.btn-action-group {
-	display: flex;
-	gap: 15px;
-	justify-content: center;
-	flex-wrap: wrap;
-}
-
-.btn-cyan {
-	background: var(--primary-cyan);
-	color: #000;
-	padding: 12px 26px;
-	border-radius: 10px;
-	text-decoration: none;
-	font-weight: 700;
-	display: inline-flex;
-	align-items: center;
-	gap: 8px;
-}
-
-.btn-cyan:hover {
-	background: var(--primary-hover);
-	color: #fff;
-}
-
-.btn-dark {
-	background: var(--bg-dark-blue);
-	color: #fff;
-	padding: 12px 24px;
-	border-radius: 10px;
-	text-decoration: none;
-	font-weight: 600;
-	display: inline-flex;
-	align-items: center;
-	gap: 8px;
-}
-
-/* Warning Modal for Tab Switches */
 .proctor-alert-modal {
 	position: fixed;
-	top: 0; left: 0; right: 0; bottom: 0;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
 	background: rgba(10, 20, 31, 0.75);
-	backdrop-filter: blur(6px);
 	display: none;
-	justify-content: center;
 	align-items: center;
-	z-index: 1000;
+	justify-content: center;
+	z-index: 10000;
 }
 
 .proctor-modal-box {
@@ -346,12 +266,6 @@ body {
 	width: 90%;
 	text-align: center;
 	box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-}
-
-.proctor-modal-box i {
-	font-size: 3rem;
-	color: var(--danger-red);
-	margin-bottom: 15px;
 }
 </style>
 <link rel="stylesheet" href="css/brand-system.css">
@@ -379,7 +293,7 @@ body {
 
 	<!-- Main Test Form View -->
 	<div id="testPlayerView">
-		<form id="testForm">
+		<form id="testForm" onsubmit="handleTestFormSubmit(event)">
 			<input type="hidden" name="timeTaken" id="timeTakenInput" value="0">
 
 			<div class="test-layout">
@@ -407,7 +321,7 @@ body {
 		</form>
 	</div>
 
-	<!-- Cooldown Lock View (Rendered if user completed test recently) -->
+	<!-- Cooldown Lock View -->
 	<div id="cooldownLockView" style="display:none;">
 		<div class="cooldown-screen">
 			<div class="cooldown-icon">
@@ -415,10 +329,9 @@ body {
 			</div>
 			<h2>Assessment Recently Completed</h2>
 			<p>You have already completed your Skill & Aptitude Assessment. To maintain evaluation accuracy, a 24-hour cooldown is active before new test attempts can be started.</p>
-			<div class="btn-action-group">
-				<a href="results.html" class="btn-cyan"><i class="fas fa-poll-h"></i> View Assessment Results</a>
-				<a href="recommendations.html" class="btn-dark"><i class="fas fa-star"></i> View Career Matches</a>
-				<a href="dashboard.html" class="btn-dark"><i class="fas fa-home"></i> Go to Dashboard</a>
+			<div class="btn-action-group" style="display:flex; gap:12px; justify-content:center; margin-top:20px;">
+				<a href="results.html" class="btn-cyan" style="background:var(--primary-cyan); color:#000; padding:10px 20px; border-radius:10px; text-decoration:none; font-weight:700;"><i class="fas fa-poll-h"></i> View Assessment Results</a>
+				<a href="recommendations.html" class="btn-dark" style="background:var(--bg-dark-blue); color:#fff; padding:10px 20px; border-radius:10px; text-decoration:none; font-weight:600;"><i class="fas fa-star"></i> View Career Matches</a>
 			</div>
 			<div style="margin-top:25px;">
 				<button onclick="forceStartRetakeTest()" style="background:none; border:none; color:var(--text-muted); font-size:0.82rem; text-decoration:underline; cursor:pointer;">
@@ -428,17 +341,41 @@ body {
 		</div>
 	</div>
 
-	<!-- Anti-Cheating Tab Switch Warning Modal -->
-	<div class="proctor-alert-modal" id="proctorAlertModal">
-		<div class="proctor-modal-box">
-			<i class="fas fa-exclamation-triangle"></i>
-			<h3 style="font-size:1.3rem; margin-bottom:10px; color:var(--text-dark);">Anti-Cheating Alert!</h3>
-			<p id="proctorAlertMessage" style="color:var(--text-muted); font-size:0.92rem; margin-bottom:20px;">
-				Tab switch or window blur detected. Switching tabs to search for answers is logged for plagiarism verification.
+	<!-- Unfinished Assessment Exit Choice Modal -->
+	<div class="proctor-alert-modal" id="exitChoiceModal">
+		<div class="proctor-modal-box" style="max-width: 520px;">
+			<i class="fas fa-question-circle" style="color: var(--primary-cyan); font-size: 3.2rem;"></i>
+			<h3 style="font-size:1.4rem; margin-bottom:10px; color:var(--text-dark);">Unfinished Assessment Test</h3>
+			<p style="color:var(--text-muted); font-size:0.92rem; margin-bottom:25px; line-height:1.6;">
+				You have answered <strong id="modalAnsweredCount" style="color:var(--primary-hover);">0</strong> out of <span id="modalTotalCount">30</span> questions. Would you like to submit your test now to evaluate your score, or continue taking the test?
 			</p>
-			<button onclick="closeProctorAlertModal()" class="btn-submit-test" style="width:auto; margin:0 auto; padding:10px 30px;">
-				I Understand & Resume Test
-			</button>
+			<div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+				<button onclick="confirmSubmitOnExit()" class="btn-submit-test" style="width:auto; padding:12px 22px; background:var(--primary-cyan); color:#000; font-weight:700;">
+					<i class="fas fa-check-circle"></i> Submit Test Now
+				</button>
+				<button onclick="continueTakingTest()" class="btn-submit-test" style="width:auto; padding:12px 22px; background:var(--bg-dark-blue); color:#fff;">
+					<i class="fas fa-play"></i> Continue Test
+				</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- Career Discovery Interest Selection Modal -->
+	<div class="proctor-alert-modal" id="discoveryInterestModal" style="display:none; z-index:9999;">
+		<div class="proctor-modal-box" style="max-width: 580px; text-align:left;">
+			<div style="text-align:center; margin-bottom:15px;">
+				<i class="fas fa-compass" style="color:var(--primary-cyan); font-size:3rem;"></i>
+				<h3 style="font-size:1.45rem; margin:8px 0 4px 0; color:var(--bg-dark-blue);">Career Discovery Setup</h3>
+				<p style="color:var(--text-muted); font-size:0.9rem; margin:0;">Select 1 to 3 technology domains that interest you most to personalize your AI career recommendations!</p>
+			</div>
+
+			<div id="discoveryInterestsGrid" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:20px 0; max-height:260px; overflow-y:auto; padding:5px;"></div>
+
+			<div style="text-align:center; margin-top:20px;">
+				<button onclick="saveDiscoveryInterestsAndStartTest()" class="btn-submit-test" style="width:auto; padding:12px 32px; background:var(--primary-cyan); color:#000; font-weight:700; font-size:0.95rem;">
+					<i class="fas fa-play-circle"></i> Save Interests & Begin Assessment Test
+				</button>
+			</div>
 		</div>
 	</div>
 
@@ -452,7 +389,48 @@ body {
 		const maxTabSwitches = 3;
 		let currentUserId = null;
 		let currentAssessmentId = 1;
-		const durationSeconds = 45 * 60; // 45 minutes total test duration
+		const durationSeconds = 45 * 60;
+
+		function renderDiscoveryInterestOptions(interests) {
+			const grid = document.getElementById('discoveryInterestsGrid');
+			if (!grid) return;
+			grid.innerHTML = interests.map(i => `
+				<label style="background:#f8fafc; border:1px solid var(--border-color); padding:12px 14px; border-radius:10px; display:flex; align-items:center; gap:10px; cursor:pointer; font-size:0.88rem; font-weight:600; color:var(--bg-dark-blue);">
+					<input type="checkbox" name="discovery_interest" value="${i.id}" style="width:18px; height:18px; accent-color:var(--primary-cyan);">
+					<span>${i.interestName}</span>
+				</label>
+			`).join('');
+		}
+
+		async function saveDiscoveryInterestsAndStartTest() {
+			const checked = document.querySelectorAll('input[name="discovery_interest"]:checked');
+			if (checked.length === 0) {
+				alert('Please select at least 1 domain interest to continue.');
+				return;
+			}
+
+			const interestIds = Array.from(checked).map(c => parseInt(c.value));
+
+			try {
+				await apiRequest('/v1/onboarding/submit', 'POST', {
+					userId: currentUserId,
+					primarySkillIds: [],
+					secondarySkillIds: [],
+					interestIds: interestIds
+				});
+			} catch (err) {}
+
+			document.getElementById('discoveryInterestModal').style.display = 'none';
+			document.getElementById('testPlayerView').style.display = 'block';
+			initPersistentTimer();
+			await loadAssessmentQuestions();
+		}
+
+		function handleTestFormSubmit(e) {
+			if (e) e.preventDefault();
+			autoSubmitTest();
+			return false;
+		}
 
 		function initPersistentTimer() {
 			const timerKey = `assessmentStartTime_${currentUserId}_${currentAssessmentId}`;
@@ -486,7 +464,7 @@ body {
 				const display = document.getElementById('timeDisplay');
 				if (display) {
 					display.innerText = (minutes < 10 ? '0' : '') + minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
-					if (totalSeconds <= 300) { // Highlight last 5 minutes in red
+					if (totalSeconds <= 300) {
 						display.style.color = '#ef4444';
 					}
 				}
@@ -523,7 +501,7 @@ body {
 					radio.checked = true;
 					const card = radio.closest('.question-card');
 					if (card) {
-						const cardId = card.id; // e.g. q-card-1
+						const cardId = card.id;
 						const index = cardId.replace('q-card-', '');
 						markAnswered(index);
 					}
@@ -538,46 +516,6 @@ body {
 			}
 		}
 
-		// Anti-Copy & Anti-Paste Enforcement
-		document.addEventListener('copy', (e) => e.preventDefault());
-		document.addEventListener('paste', (e) => e.preventDefault());
-		document.addEventListener('cut', (e) => e.preventDefault());
-
-		// Tab Switch & Window Blur Detection
-		document.addEventListener('visibilitychange', () => {
-			if (document.hidden && !isTestSubmitting && document.getElementById('testPlayerView').style.display !== 'none') {
-				handleTabSwitch();
-			}
-		});
-
-		function handleTabSwitch() {
-			tabSwitchCount++;
-			const badge = document.getElementById('proctorStatusBadge');
-			if (badge) {
-				badge.style.background = 'rgba(239, 68, 68, 0.15)';
-				badge.style.color = 'var(--danger-red)';
-				badge.style.borderColor = 'rgba(239, 68, 68, 0.3)';
-				badge.innerHTML = `<i class="fas fa-exclamation-circle"></i> Anti-Cheating Warning (${tabSwitchCount}/${maxTabSwitches})`;
-			}
-
-			if (tabSwitchCount >= maxTabSwitches) {
-				alert('Maximum tab switches exceeded (3/3). Your assessment test is automatically being submitted due to anti-cheating policy violations.');
-				autoSubmitTest();
-			} else {
-				const modal = document.getElementById('proctorAlertModal');
-				const msg = document.getElementById('proctorAlertMessage');
-				if (msg) {
-					msg.innerHTML = `Tab switch detected (<strong>${tabSwitchCount}/${maxTabSwitches}</strong>). Please stay on the assessment window. Exceeding 3 tab switches will automatically terminate and submit your test.`;
-				}
-				if (modal) modal.style.display = 'flex';
-			}
-		}
-
-		function closeProctorAlertModal() {
-			document.getElementById('proctorAlertModal').style.display = 'none';
-		}
-
-		// Smooth Scrolling to Question Card from Palette
 		function scrollToQuestion(qNum) {
 			const card = document.getElementById('q-card-' + qNum);
 			if (card) {
@@ -596,7 +534,6 @@ body {
 				badge.classList.add('answered');
 			}
 			updatePaletteCount();
-					restoreSavedAnswers();
 		}
 
 		function updatePaletteCount() {
@@ -605,17 +542,6 @@ body {
 			const countEl = document.getElementById('paletteCount');
 			if (countEl) countEl.innerText = `${answeredQ} / ${totalQ}`;
 		}
-
-		// Handle Exit / Dashboard Navigation with Confirmation & Auto-Submit
-		
-		// Browser Back Button & Exit Interception
-		history.pushState(null, null, location.href);
-		window.addEventListener('popstate', function (event) {
-			if (!isTestSubmitting && document.getElementById('testPlayerView').style.display !== 'none') {
-				history.pushState(null, null, location.href);
-				openExitChoiceModal();
-			}
-		});
 
 		function openExitChoiceModal() {
 			const totalQ = document.querySelectorAll('.question-card').length || 30;
@@ -640,20 +566,10 @@ body {
 			await autoSubmitTest();
 		}
 
-		function handleDashboardExit(e) {
-			if (isTestSubmitting || document.getElementById('testPlayerView').style.display === 'none') {
-				return;
-			}
-			e.preventDefault();
-			openExitChoiceModal();
-		}
-
-
-		// Auto-Submit Test Logic
 		async function autoSubmitTest() {
 			if (isTestSubmitting) return;
 			isTestSubmitting = true;
-			clearInterval(timerInterval);
+			if (timerInterval) clearInterval(timerInterval);
 
 			const testForm = document.getElementById('testForm');
 			const formData = new FormData(testForm);
@@ -663,6 +579,14 @@ body {
 				if (key.startsWith('question_')) {
 					const qId = key.replace('question_', '');
 					answers[qId] = val;
+				}
+			}
+
+			if (currentUserId && currentAssessmentId) {
+				const savedKey = `savedAnswers_${currentUserId}_${currentAssessmentId}`;
+				const saved = JSON.parse(localStorage.getItem(savedKey) || '{}');
+				for (let [qId, val] of Object.entries(saved)) {
+					if (!answers[qId]) answers[qId] = val;
 				}
 			}
 
@@ -679,69 +603,23 @@ body {
 			window.location.href = 'results.html';
 		}
 
-		function forceStartRetakeTest() {
+		async function forceStartRetakeTest() {
 			if (currentUserId) {
 				localStorage.removeItem(`assessmentCompleted_${currentUserId}`);
 			}
 			document.getElementById('cooldownLockView').style.display = 'none';
 			document.getElementById('testPlayerView').style.display = 'block';
 			initPersistentTimer();
+			await loadAssessmentQuestions();
 		}
 
-		function initTimer() {
-			if (timerInterval) clearInterval(timerInterval);
-			timerInterval = setInterval(() => {
-				totalSeconds--;
-				elapsedSeconds++;
-
-				let minutes = Math.floor(totalSeconds / 60);
-				let seconds = totalSeconds % 60;
-
-				document.getElementById('timeDisplay').innerText = 
-					(minutes < 10 ? '0' : '') + minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
-
-				document.getElementById('timeTakenInput').value = elapsedSeconds;
-
-				if (totalSeconds <= 0) {
-					clearInterval(timerInterval);
-					alert('Time expired! Submitting assessment test automatically.');
-					autoSubmitTest();
-				}
-			}, 1000);
-		}
-
-		document.addEventListener('DOMContentLoaded', async () => {
-			const user = requireAuth();
-			if (!user) return;
-			currentUserId = user.id;
-
-			const urlParams = new URLSearchParams(window.location.search);
-			currentAssessmentId = urlParams.get('id') || 1;
-
-			// 1. Check Cooldown / Retake Limit
+		async function loadAssessmentQuestions() {
 			try {
-				const resData = await apiRequest(`/v1/assessment/results/${user.id}`);
-				const isCompletedLocal = localStorage.getItem(`assessmentCompleted_${user.id}`) === 'true';
-				const forceParam = urlParams.get('force') === 'true';
-
-				if (!forceParam && (isCompletedLocal || (resData && resData.hasAttempted))) {
-					document.getElementById('testPlayerView').style.display = 'none';
-					document.getElementById('cooldownLockView').style.display = 'block';
-					return;
-				}
-			} catch (err) {}
-
-			// Render Assessment Test Player
-			document.getElementById('testPlayerView').style.display = 'block';
-			initPersistentTimer();
-
-			try {
-				const data = await apiRequest(`/v1/assessment/${currentAssessmentId}?userId=${user.id}`);
-
+				const data = await apiRequest(`/v1/assessment/${currentAssessmentId}?userId=${currentUserId}`);
 				const questionsContainer = document.getElementById('questionsContainer');
 				const paletteGrid = document.getElementById('paletteGrid');
 
-				if (data.questions && data.questions.length > 0) {
+				if (data && data.questions && data.questions.length > 0) {
 					if (questionsContainer) {
 						let html = data.questions.map((q, idx) => `
 							<div class="question-card" id="q-card-${idx + 1}">
@@ -771,7 +649,6 @@ body {
 							</div>
 						`).join('');
 
-						// Add End of Test Submit Section
 						html += `
 							<div style="background: white; border-radius: 16px; padding: 30px; text-align: center; border: 1px solid var(--border-color); margin-top: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.04);">
 								<h3 style="font-size: 1.15rem; font-weight: 700; color: var(--bg-dark-blue); margin-bottom: 8px;">
@@ -799,38 +676,59 @@ body {
 					restoreSavedAnswers();
 				}
 			} catch (err) {
-				console.log('Assessment test loaded');
+				console.log('Error loading questions');
 			}
+		}
 
-			// Form Submit Event
-			const testForm = document.getElementById('testForm');
-			if (testForm) {
-				testForm.addEventListener('submit', async (e) => {
-					e.preventDefault();
-					await autoSubmitTest();
-				});
+		// Exit Interception
+		history.pushState(null, null, location.href);
+		window.addEventListener('popstate', function () {
+			if (!isTestSubmitting && document.getElementById('testPlayerView').style.display !== 'none') {
+				history.pushState(null, null, location.href);
+				openExitChoiceModal();
 			}
 		});
+
+		document.addEventListener('DOMContentLoaded', async () => {
+			const user = requireAuth();
+			if (!user) return;
+			currentUserId = user.id;
+
+			const urlParams = new URLSearchParams(window.location.search);
+			currentAssessmentId = urlParams.get('id') || 1;
+
+			// 1. Check Cooldown / Retake Limit
+			try {
+				const resData = await apiRequest(`/v1/assessment/results/${user.id}`);
+				const isCompletedLocal = localStorage.getItem(`assessmentCompleted_${user.id}`) === 'true';
+				const forceParam = urlParams.get('force') === 'true';
+
+				if (!forceParam && (isCompletedLocal || (resData && resData.hasAttempted))) {
+					document.getElementById('testPlayerView').style.display = 'none';
+					document.getElementById('cooldownLockView').style.display = 'block';
+					return;
+				}
+			} catch (err) {}
+
+			// 2. Check if Career Discovery setup is needed
+			try {
+				const obData = await apiRequest('/v1/onboarding/data');
+				const recData = await apiRequest(`/v1/recommendations/${user.id}`);
+				const userInterests = (recData && recData.userInterests) ? recData.userInterests : [];
+				const userSkills = (recData && recData.userSkills) ? recData.userSkills : [];
+
+				if (userInterests.length === 0 && userSkills.length === 0 && obData && obData.interests) {
+					document.getElementById('testPlayerView').style.display = 'none';
+					renderDiscoveryInterestOptions(obData.interests);
+					document.getElementById('discoveryInterestModal').style.display = 'flex';
+					return;
+				}
+			} catch (err) {}
+
+			document.getElementById('testPlayerView').style.display = 'block';
+			initPersistentTimer();
+			await loadAssessmentQuestions();
+		});
 	</script>
-
-	<!-- Unfinished Assessment Exit Choice Modal -->
-	<div class="proctor-alert-modal" id="exitChoiceModal">
-		<div class="proctor-modal-box" style="max-width: 520px;">
-			<i class="fas fa-question-circle" style="color: var(--primary-cyan); font-size: 3.2rem;"></i>
-			<h3 style="font-size:1.4rem; margin-bottom:10px; color:var(--text-dark);">Unfinished Assessment Test</h3>
-			<p style="color:var(--text-muted); font-size:0.92rem; margin-bottom:25px; line-height:1.6;">
-				You have answered <strong id="modalAnsweredCount" style="color:var(--primary-hover);">0</strong> out of <span id="modalTotalCount">30</span> questions. Would you like to submit your test now to evaluate your score, or continue taking the test?
-			</p>
-			<div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
-				<button onclick="confirmSubmitOnExit()" class="btn-submit-test" style="width:auto; padding:12px 22px; background:var(--primary-cyan); color:#000; font-weight:700;">
-					<i class="fas fa-check-circle"></i> Submit Test Now
-				</button>
-				<button onclick="continueTakingTest()" class="btn-submit-test" style="width:auto; padding:12px 22px; background:var(--bg-dark-blue); color:#fff;">
-					<i class="fas fa-play"></i> Continue Test
-				</button>
-			</div>
-		</div>
-	</div>
-
 </body>
 </html>

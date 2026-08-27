@@ -7,14 +7,14 @@
 }
 
 body.admin-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f5f7fa;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: #f4f7f9;
     color: #333;
 }
 
 body.admin-login-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: linear-gradient(135deg, #16324f 0%, #1d5368 100%);
     min-height: 100vh;
     display: flex;
     align-items: center;
@@ -28,7 +28,7 @@ body.admin-login-body {
     top: 0;
     width: 260px;
     height: 100vh;
-    background: linear-gradient(180deg, #1e3a8a 0%, #1e40af 100%);
+    background: #16324f;
     color: white;
     z-index: 1000;
     transition: transform 0.3s ease;
@@ -162,7 +162,7 @@ body.admin-login-body {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #16324f 0%, #1d5368 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -711,7 +711,7 @@ body.admin-login-body {
     width: 80px;
     height: 80px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #16324f 0%, #1d5368 100%);
     display: flex;
     align-items: center;
     justify-content: center;

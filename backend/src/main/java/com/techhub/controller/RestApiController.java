@@ -138,7 +138,7 @@ public class RestApiController {
         return ResponseEntity.ok(Map.of("message", "Onboarding completed successfully!"));
     }
 
-    // Get Recommendations Data
+        // Get Recommendations Data
     @GetMapping("/recommendations/{userId}")
     public ResponseEntity<?> getRecommendations(@PathVariable Long userId) {
         User user = userService.findById(userId);
@@ -154,16 +154,37 @@ public class RestApiController {
         }
 
         List<Career> careers = careerService.findAll();
+        Map<Long, Career> careerMap = new HashMap<>();
+        for (Career c : careers) careerMap.put(c.getId(), c);
+
+        List<Map<String, Object>> recDetails = new ArrayList<>();
+        if (recommendations != null) {
+            for (Recommendation r : recommendations) {
+                Career c = careerMap.get(r.getCareerId());
+                Map<String, Object> map = new HashMap<>();
+                map.put("id", r.getId());
+                map.put("userId", r.getUserId());
+                map.put("careerId", r.getCareerId());
+                map.put("careerName", c != null ? c.getCareerName() : "Career Specialist");
+                map.put("explanation", c != null ? c.getDescription() : "Recommended career matching your evaluation profile.");
+                map.put("requiredSkills", c != null ? c.getRequiredSkills() : "");
+                map.put("matchScore", r.getMatchScore());
+                recDetails.add(map);
+            }
+        }
+
         List<Result> userResults = resultService.findByUserId(userId);
         List<UserSkill> userSkills = userSkillRepository.findByUserId(userId);
+        List<Interest> userInterests = interestService.getUserInterests(userId);
         List<Skill> masterSkills = skillRepository.findAll();
 
         Map<String, Object> data = new HashMap<>();
         data.put("user", user);
-        data.put("recommendations", recommendations != null ? recommendations : Collections.emptyList());
+        data.put("recommendations", recDetails);
         data.put("careers", careers);
         data.put("userResults", userResults);
         data.put("userSkills", userSkills);
+        data.put("userInterests", userInterests);
         data.put("masterSkills", masterSkills);
 
         return ResponseEntity.ok(data);
@@ -537,7 +558,7 @@ public class RestApiController {
 
 
 
-    // Get Detailed Assessment Results & Explanation Report for Student
+            // Get Detailed Assessment Results & Explanation Report for Student - 100% Dynamic
     @GetMapping("/assessment/results/{userId}")
     public ResponseEntity<?> getDetailedAssessmentResults(@PathVariable Long userId) {
         User user = userService.findById(userId);
@@ -548,26 +569,81 @@ public class RestApiController {
         List<Result> results = resultService.findByUserId(userId);
         boolean hasAttempted = results != null && !results.isEmpty();
 
-        Result latestResult = hasAttempted ? results.get(results.size() - 1) : null;
-        Long assessmentId = latestResult != null ? latestResult.getAssessmentId() : 1L;
+        if (!hasAttempted) {
+            return ResponseEntity.ok(Map.of(
+                "user", user,
+                "hasAttempted", false,
+                "latestResult", Map.of(),
+                "skillBreakdown", Collections.emptyList(),
+                "questionsReport", Collections.emptyList()
+            ));
+        }
 
-        // Fetch questions for assessment
-        List<Question> questions = questionRepository.findByAssessmentId(assessmentId);
-        if (questions == null || questions.isEmpty()) {
-            questions = questionRepository.findAll();
-            if (questions.size() > 30) questions = questions.subList(0, 30);
+        Result latestResult = results.get(results.size() - 1);
+        Long assessmentId = latestResult.getAssessmentId() != null ? latestResult.getAssessmentId() : 1L;
+
+        // Parse user answers JSON map: qId (Long) -> choice (String)
+        Map<Long, String> userAnswersMap = new LinkedHashMap<>();
+        if (latestResult.getUserAnswersJson() != null && !latestResult.getUserAnswersJson().isEmpty()) {
+            try {
+                Map<String, String> rawMap = new com.fasterxml.jackson.databind.ObjectMapper().readValue(
+                    latestResult.getUserAnswersJson(), 
+                    new com.fasterxml.jackson.core.type.TypeReference<Map<String, String>>(){}
+                );
+                for (Map.Entry<String, String> entry : rawMap.entrySet()) {
+                    userAnswersMap.put(Long.valueOf(entry.getKey()), entry.getValue());
+                }
+            } catch (Exception ignored) {}
+        }
+
+        // Fetch attempted questions first, then fill remaining up to 30
+        List<Question> questions = new ArrayList<>();
+        Set<Long> loadedQIds = new HashSet<>();
+
+        for (Long qId : userAnswersMap.keySet()) {
+            Optional<Question> qOpt = questionRepository.findById(qId);
+            if (qOpt.isPresent() && !loadedQIds.contains(qId)) {
+                questions.add(qOpt.get());
+                loadedQIds.add(qId);
+            }
+        }
+
+        List<Question> fallbackQs = questionRepository.findByAssessmentId(assessmentId);
+        if (fallbackQs == null || fallbackQs.isEmpty()) {
+            fallbackQs = questionRepository.findAll();
+        }
+
+        for (Question q : fallbackQs) {
+            if (questions.size() >= 30) break;
+            if (!loadedQIds.contains(q.getId())) {
+                questions.add(q);
+                loadedQIds.add(q.getId());
+            }
         }
 
         List<Map<String, Object>> questionsReport = new ArrayList<>();
-        Map<String, int[]> skillStats = new HashMap<>(); // skill -> [correctCount, totalCount]
+        Map<String, int[]> skillStats = new HashMap<>();
+
+        int answeredCount = 0;
+        int correctCount = 0;
+        int unattemptedCount = 0;
 
         for (int i = 0; i < questions.size(); i++) {
             Question q = questions.get(i);
             String skill = q.getSkillTag() != null ? q.getSkillTag() : "General";
 
-            // Simulated answer evaluation for demonstration if exact response map is transient
-            boolean isCorrect = (latestResult != null && latestResult.getPercentage() >= 50) ? (i % 5 != 4) : (i % 2 == 0);
-            String userAns = isCorrect ? q.getCorrectAnswer() : (q.getCorrectAnswer().equalsIgnoreCase("A") ? "B" : "A");
+            boolean isAttempted = userAnswersMap.containsKey(q.getId());
+            String selectedAns = isAttempted ? userAnswersMap.get(q.getId()) : null;
+            boolean isCorrect = isAttempted && selectedAns != null && selectedAns.trim().equalsIgnoreCase(q.getCorrectAnswer().trim());
+
+            String status = "UNATTEMPTED";
+            if (isAttempted) {
+                status = isCorrect ? "CORRECT" : "INCORRECT";
+                answeredCount++;
+                if (isCorrect) correctCount++;
+            } else {
+                unattemptedCount++;
+            }
 
             skillStats.putIfAbsent(skill, new int[]{0, 0});
             skillStats.get(skill)[1]++;
@@ -584,8 +660,10 @@ public class RestApiController {
             item.put("optionC", q.getOptionC());
             item.put("optionD", q.getOptionD());
             item.put("correctAnswer", q.getCorrectAnswer());
-            item.put("selectedAnswer", userAns);
+            item.put("selectedAnswer", selectedAns);
+            item.put("isAttempted", isAttempted);
             item.put("isCorrect", isCorrect);
+            item.put("status", status);
             item.put("difficultyLevel", q.getDifficultyLevel() != null ? q.getDifficultyLevel() : "MEDIUM");
             item.put("skillTag", skill);
             item.put("explanation", explanation);
@@ -597,7 +675,7 @@ public class RestApiController {
         for (Map.Entry<String, int[]> entry : skillStats.entrySet()) {
             int correct = entry.getValue()[0];
             int total = entry.getValue()[1];
-            int accuracy = (int) Math.round((correct * 100.0) / total);
+            int accuracy = total > 0 ? (int) Math.round((correct * 100.0) / total) : 0;
             skillBreakdown.add(Map.of(
                 "skillName", entry.getKey(),
                 "correct", correct,
@@ -608,8 +686,11 @@ public class RestApiController {
 
         Map<String, Object> data = new HashMap<>();
         data.put("user", user);
-        data.put("hasAttempted", hasAttempted);
+        data.put("hasAttempted", true);
         data.put("latestResult", latestResult);
+        data.put("answeredCount", answeredCount);
+        data.put("correctCount", correctCount);
+        data.put("unattemptedCount", unattemptedCount);
         data.put("skillBreakdown", skillBreakdown);
         data.put("questionsReport", questionsReport);
 
