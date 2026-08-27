@@ -58,15 +58,9 @@
           <tags>persp.newWizSC:org.eclipse.ui.editors.wizards.UntitledTextFileWizard</tags>
           <tags>persp.perspSC:org.eclipse.jdt.ui.JavaBrowsingPerspective</tags>
           <tags>persp.perspSC:org.eclipse.debug.ui.DebugPerspective</tags>
-          <tags>persp.editorOnboardingImageUri:platform:/plugin/org.eclipse.jdt.ui/$nl$/icons/full/onboarding_jperspective.svg</tags>
-          <tags>persp.editorOnboardingText:Open a file or drop files here to open them.</tags>
           <tags>persp.showIn:org.eclipse.jdt.ui.PackageExplorer</tags>
           <tags>persp.showIn:org.eclipse.team.ui.GenericHistoryView</tags>
           <tags>persp.showIn:org.eclipse.ui.navigator.ProjectExplorer</tags>
-          <tags>persp.editorOnboardingCommand:Find Actions$$$Ctrl+3</tags>
-          <tags>persp.editorOnboardingCommand:Show Key Assist$$$Ctrl+Shift+L</tags>
-          <tags>persp.editorOnboardingCommand:New$$$Ctrl+N</tags>
-          <tags>persp.editorOnboardingCommand:Open Type$$$Ctrl+Shift+T</tags>
           <tags>persp.viewSC:org.eclipse.mylyn.tasks.ui.views.tasks</tags>
           <tags>persp.newWizSC:org.eclipse.mylyn.tasks.ui.wizards.new.repository.task</tags>
           <tags>persp.viewSC:org.eclipse.terminal.view.ui.TerminalsView</tags>
@@ -81,6 +75,12 @@
           <tags>persp.newWizSC:org.eclipse.jdt.junit.wizards.NewTestCaseCreationWizard</tags>
           <tags>persp.actionSet:org.eclipse.jdt.junit.JUnitActionSet</tags>
           <tags>persp.viewSC:org.eclipse.ant.ui.views.AntView</tags>
+          <tags>persp.editorOnboardingImageUri:platform:/plugin/org.eclipse.jdt.ui/$nl$/icons/full/onboarding_jperspective.svg</tags>
+          <tags>persp.editorOnboardingText:Open a file or drop files here to open them.</tags>
+          <tags>persp.editorOnboardingCommand:Find Actions$$$Ctrl+3</tags>
+          <tags>persp.editorOnboardingCommand:Show Key Assist$$$Ctrl+Shift+L</tags>
+          <tags>persp.editorOnboardingCommand:New$$$Ctrl+N</tags>
+          <tags>persp.editorOnboardingCommand:Open Type$$$Ctrl+Shift+T</tags>
           <children xsi:type="basic:PartSashContainer" xmi:id="_zjbN0Z_TEfGsZt1T-U04aQ" selectedElement="_zjbN0p_TEfGsZt1T-U04aQ" horizontal="true">
             <children xsi:type="basic:PartSashContainer" xmi:id="_zjbN0p_TEfGsZt1T-U04aQ" containerData="2500" selectedElement="_zjbN05_TEfGsZt1T-U04aQ">
               <children xsi:type="basic:PartSashContainer" xmi:id="_zjbN05_TEfGsZt1T-U04aQ" containerData="6000" selectedElement="_zjbN1J_TEfGsZt1T-U04aQ">
@@ -380,7 +380,7 @@
       </children>
       <children xsi:type="menu:ToolBar" xmi:id="_ypdf8J_TEfGsZt1T-U04aQ" elementId="org.eclipse.ui.workbench.file">
         <tags>Draggable</tags>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_yp8oIJ_TEfGsZt1T-U04aQ" elementId="print" visible="false" iconURI="platform:/plugin/org.eclipse.ui/icons/full/etool16/print_edit.svg" tooltip="Print" enabled="false" command="_x9bgeJ_TEfGsZt1T-U04aQ"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_hB8dIKB3EfGxl4ewMpzi1A" elementId="print" visible="false" iconURI="platform:/plugin/org.eclipse.ui/icons/full/etool16/print_edit.svg" tooltip="Print" command="_x9bgeJ_TEfGsZt1T-U04aQ"/>
       </children>
       <children xsi:type="menu:ToolBar" xmi:id="_ypeHAJ_TEfGsZt1T-U04aQ" elementId="group.edit" toBeRendered="false">
         <tags>toolbarSeparator</tags>
@@ -388,8 +388,8 @@
       </children>
       <children xsi:type="menu:ToolBar" xmi:id="_ypeuEJ_TEfGsZt1T-U04aQ" elementId="org.eclipse.ui.workbench.edit">
         <tags>Draggable</tags>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_yqA5kJ_TEfGsZt1T-U04aQ" elementId="undo" iconURI="platform:/plugin/org.eclipse.ui/icons/full/etool16/undo_edit.svg" tooltip="Undo" enabled="false" command="_x9SWmZ_TEfGsZt1T-U04aQ"/>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_yqCuwJ_TEfGsZt1T-U04aQ" elementId="redo" iconURI="platform:/plugin/org.eclipse.ui/icons/full/etool16/redo_edit.svg" tooltip="Redo" enabled="false" command="_x9XPH5_TEfGsZt1T-U04aQ"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_hB9EMKB3EfGxl4ewMpzi1A" elementId="undo" iconURI="platform:/plugin/org.eclipse.ui/icons/full/etool16/undo_edit.svg" tooltip="Undo" enabled="false" command="_x9SWmZ_TEfGsZt1T-U04aQ"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_hB9EMaB3EfGxl4ewMpzi1A" elementId="redo" iconURI="platform:/plugin/org.eclipse.ui/icons/full/etool16/redo_edit.svg" tooltip="Redo" enabled="false" command="_x9XPH5_TEfGsZt1T-U04aQ"/>
       </children>
       <children xsi:type="menu:ToolBar" xmi:id="_ypeuEZ_TEfGsZt1T-U04aQ" elementId="additions" toBeRendered="false">
         <tags>toolbarSeparator</tags>
@@ -410,7 +410,7 @@
       </children>
       <children xsi:type="menu:ToolBar" xmi:id="_ypf8MJ_TEfGsZt1T-U04aQ" elementId="org.eclipse.ui.workbench.navigate">
         <tags>Draggable</tags>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_yqFyEJ_TEfGsZt1T-U04aQ" elementId="org.eclipse.ui.window.pinEditor" iconURI="platform:/plugin/org.eclipse.ui/icons/full/etool16/pin_editor.svg" tooltip="Pin Editor" enabled="false" type="Check" command="_x9aSgZ_TEfGsZt1T-U04aQ"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_hB9rQKB3EfGxl4ewMpzi1A" elementId="org.eclipse.ui.window.pinEditor" iconURI="platform:/plugin/org.eclipse.ui/icons/full/etool16/pin_editor.svg" tooltip="Pin Editor" enabled="false" type="Check" command="_x9aSgZ_TEfGsZt1T-U04aQ"/>
       </children>
       <children xsi:type="menu:ToolBar" xmi:id="_yphKUJ_TEfGsZt1T-U04aQ" elementId="group.editor" toBeRendered="false">
         <tags>toolbarSeparator</tags>
@@ -693,9 +693,7 @@
     <bindings xmi:id="_x-3q3J_TEfGsZt1T-U04aQ" keySequence="ALT+CTRL+SHIFT+B S" command="_x9a5WZ_TEfGsZt1T-U04aQ"/>
     <bindings xmi:id="_x-3q3Z_TEfGsZt1T-U04aQ" keySequence="ALT+CTRL+SHIFT+F12" command="_x9cHjZ_TEfGsZt1T-U04aQ"/>
     <bindings xmi:id="_x-4R4J_TEfGsZt1T-U04aQ" keySequence="DEL" command="_x9PTL5_TEfGsZt1T-U04aQ"/>
-    <bindings xmi:id="_x-78QJ_TEfGsZt1T-U04aQ" keySequence="ALT+," command="_x9a5cp_TEfGsZt1T-U04aQ"/>
     <bindings xmi:id="_x--YgZ_TEfGsZt1T-U04aQ" keySequence="ALT+-" command="_x9YdJJ_TEfGsZt1T-U04aQ"/>
-    <bindings xmi:id="_x--_kJ_TEfGsZt1T-U04aQ" keySequence="ALT+." command="_x9bgwZ_TEfGsZt1T-U04aQ"/>
     <bindings xmi:id="_x-_moJ_TEfGsZt1T-U04aQ" keySequence="ALT+CR" command="_x9a5XZ_TEfGsZt1T-U04aQ"/>
     <bindings xmi:id="_x-_moZ_TEfGsZt1T-U04aQ" keySequence="ALT+SHIFT+D B" command="_x9cHg5_TEfGsZt1T-U04aQ"/>
     <bindings xmi:id="_x-_mop_TEfGsZt1T-U04aQ" keySequence="ALT+SHIFT+D E" command="_x9cHyp_TEfGsZt1T-U04aQ"/>
@@ -2846,7 +2844,7 @@
   <addons xmi:id="_x7zIxZ_TEfGsZt1T-U04aQ" elementId="MinMax Addon" contributorURI="platform:/plugin/org.eclipse.platform" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.minmax.MinMaxAddon"/>
   <addons xmi:id="_x7zIxp_TEfGsZt1T-U04aQ" elementId="org.eclipse.ui.workbench.addon.0" contributorURI="platform:/plugin/org.eclipse.platform" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.HandlerProcessingAddon"/>
   <addons xmi:id="_x8P0oJ_TEfGsZt1T-U04aQ" elementId="SplitterAddon" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.splitteraddon.SplitterAddon"/>
-  <addons xmi:id="_IYS0IKimEeS11vbz3f9ezw" elementId="org.eclipse.ui.ide.addon.0" contributorURI="platform:/plugin/org.eclipse.ui.ide" contributionURI="bundleclass://org.eclipse.ui.ide/org.eclipse.ui.internal.ide.addons.SaveAllDirtyPartsAddon"/>
+  <addons xmi:id="_gzgYgaB3EfGxl4ewMpzi1A" elementId="org.eclipse.ui.ide.addon.0" contributionURI="bundleclass://org.eclipse.ui.ide/org.eclipse.ui.internal.ide.addons.SaveAllDirtyPartsAddon"/>
   <addons xmi:id="_dz0JgGOlEeSMMaPQU2nlzw" elementId="org.eclipse.ui.ide.application.addon.0" contributorURI="platform:/plugin/org.eclipse.ui.ide.application" contributionURI="bundleclass://org.eclipse.ui.ide.application/org.eclipse.ui.internal.ide.application.addons.ModelCleanupAddon"/>
   <categories xmi:id="_x9Ds8J_TEfGsZt1T-U04aQ" elementId="org.eclipse.team.ui.category.team" name="Version control (Team)" description="Actions that apply when working with a version control system"/>
   <categories xmi:id="_x9EUAJ_TEfGsZt1T-U04aQ" elementId="org.eclipse.ui.category.views" name="Views" description="Commands for opening views"/>
