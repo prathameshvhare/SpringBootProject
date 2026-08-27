@@ -48,10 +48,14 @@ public class UserService {
         User savedUser = userRepository.save(user);
         log.info("User registered successfully with ID: {}", savedUser.getId());
 
-        // Send Welcome Email (Point 5)
-        emailService.sendEmail(savedUser.getEmail(), 
-                "Welcome to Smart Career Recommendation System!", 
-                "Hello " + savedUser.getName() + ",\n\nWelcome to Smart Career Recommendation System! Your account has been registered successfully.\n\nBest regards,\nSmart Career Team");
+        // Send Welcome Email safely
+        try {
+            emailService.sendEmail(savedUser.getEmail(), 
+                    "Welcome to Smart Career Recommendation System!", 
+                    "Hello " + savedUser.getName() + ",\n\nWelcome to Smart Career Recommendation System! Your account has been registered successfully.\n\nBest regards,\nSmart Career Team");
+        } catch (Exception e) {
+            log.warn("Welcome email notification skipped or SMTP not configured: {}", e.getMessage());
+        }
 
         return savedUser;
     }

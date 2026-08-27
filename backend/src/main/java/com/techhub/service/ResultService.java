@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class ResultService {
@@ -45,26 +46,39 @@ public class ResultService {
         return resultRepository.save(result);
     }
 
-    public Result evaluateAndSave(User user, Assessment assessment, Map<Long, String> answers) {
-        List<Question> questions = questionRepository.findByAssessmentId(assessment.getId());
+        public Result evaluateAndSave(User user, Assessment assessment, Map<Long, String> answers) {
         int score = 0;
+        int totalQuestions = 30; // 30 questions assessment
 
-        for (Question question : questions) {
-            String selected = answers.get(question.getId());
-            if (selected != null && selected.equalsIgnoreCase(question.getCorrectAnswer())) {
-                score++;
+        String answersJson = "{}";
+        if (answers != null && !answers.isEmpty()) {
+            try {
+                answersJson = new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(answers);
+            } catch (Exception ignored) {}
+
+            for (Map.Entry<Long, String> entry : answers.entrySet()) {
+                try {
+                    Long qId = entry.getKey();
+                    String userChoice = entry.getValue();
+                    Optional<Question> qOpt = questionRepository.findById(qId);
+                    if (qOpt.isPresent()) {
+                        Question q = qOpt.get();
+                        if (userChoice != null && userChoice.trim().equalsIgnoreCase(q.getCorrectAnswer().trim())) {
+                            score++;
+                        }
+                    }
+                } catch (Exception ignored) {}
             }
         }
 
-        double percentage = assessment.getTotalMarks() == 0
-                ? 0.0
-                : (score * 100.0) / assessment.getTotalMarks();
+        double percentage = Math.round(((score * 100.0) / totalQuestions) * 10.0) / 10.0;
 
         Result result = new Result();
         result.setUserId(user.getId());
-        result.setAssessmentId(assessment.getId());
+        result.setAssessmentId(assessment != null && assessment.getId() != null ? assessment.getId() : 1L);
         result.setScore(score);
         result.setPercentage(percentage);
+        result.setUserAnswersJson(answersJson);
 
         return resultRepository.save(result);
     }

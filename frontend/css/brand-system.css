@@ -1,0 +1,175 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --primary-cyan: #22d3ee;
+    --primary-hover: #06b6d4;
+    --bg-dark-blue: #0a141f;
+    --brand-ink: #0f172a;
+    --brand-navy: #0a141f;
+    --brand-teal: #22d3ee;
+    --brand-teal-dark: #06b6d4;
+    --brand-sky: #f0fdfa;
+    --brand-coral: #ef4444;
+    --brand-bg: #f8fafc;
+    --brand-surface: #ffffff;
+    --brand-line: #e2e8f0;
+    --brand-muted: #64748b;
+    --brand-shadow: 0 10px 30px rgba(10, 20, 31, 0.05);
+    --success: #10b981;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Poppins', 'Plus Jakarta Sans', sans-serif;
+    color: var(--brand-ink);
+    background: var(--brand-bg);
+    margin: 0;
+    padding: 0;
+}
+
+/* Typography & Links */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--bg-dark-blue);
+}
+
+a {
+    transition: all 0.25s ease;
+}
+
+/* Logo Styling */
+.logo, .header-logo, .admin-sidebar-header h2 {
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.logo span, .header-logo span, .admin-sidebar-header h2 span {
+    color: var(--primary-cyan);
+}
+
+/* Base Layouts */
+body.admin-body, body.student-body {
+    background: var(--brand-bg);
+    color: var(--brand-ink);
+}
+
+.admin-sidebar {
+    background: var(--bg-dark-blue);
+}
+
+.admin-sidebar-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.admin-sidebar-nav a {
+    color: var(--brand-muted);
+}
+
+.admin-sidebar-nav a:hover,
+.admin-sidebar-nav a.active {
+    background: rgba(34, 211, 238, 0.12);
+    color: var(--primary-cyan);
+}
+
+.admin-header {
+    background: #ffffff;
+    border-bottom: 1px solid var(--brand-line);
+}
+
+.admin-user-avatar {
+    background: var(--primary-cyan);
+    color: #000000;
+    font-weight: 700;
+}
+
+.admin-user-name {
+    color: var(--bg-dark-blue);
+}
+
+.admin-user-role {
+    color: var(--brand-muted);
+}
+
+/* Cards & Surfaces */
+.form-container,
+.success-card,
+.assessment-container,
+.onboarding-card,
+.summary-card,
+.question-review-card,
+.career-report-card,
+.sidebar-panel,
+.question-card,
+.skill-acc-card {
+    background: #ffffff;
+    border: 1px solid var(--brand-line);
+    border-radius: 16px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.02);
+}
+
+/* Input Controls */
+input, select, textarea {
+    border: 1px solid var(--brand-line);
+    border-radius: 10px;
+    font-family: 'Poppins', sans-serif;
+    color: var(--brand-ink);
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--primary-cyan);
+    box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.2);
+}
+
+/* Buttons */
+.btn-cyan,
+.btn-primary-cyan,
+.btn-hero-primary,
+.admin-btn-primary {
+    background: var(--primary-cyan);
+    color: #000000;
+    border: none;
+    font-weight: 700;
+    border-radius: 10px;
+    transition: all 0.25s ease;
+}
+
+.btn-cyan:hover,
+.btn-primary-cyan:hover,
+.btn-hero-primary:hover,
+.admin-btn-primary:hover {
+    background: var(--primary-hover);
+    color: #ffffff;
+}
+
+.btn-dark,
+.admin-btn-secondary {
+    background: var(--bg-dark-blue);
+    color: #ffffff;
+    border: none;
+    font-weight: 600;
+    border-radius: 10px;
+}
+
+.btn-dark:hover,
+.admin-btn-secondary:hover {
+    background: #1e293b;
+    color: #ffffff;
+}
+
+/* Alerts & Badges */
+.admin-alert-success, .alert-success {
+    background: rgba(16, 185, 129, 0.12);
+    color: #065f46;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.admin-alert-error, .alert-error {
+    background: rgba(239, 68, 68, 0.12);
+    color: #991b1b;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
