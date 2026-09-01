@@ -109,14 +109,14 @@ public class RecommendationService {
         }
 
         boolean hasSkillsOnboarded = !primarySkillNames.isEmpty() || !secondarySkillNames.isEmpty();
-        double latestAssessmentPercentage = userResults.isEmpty() ? 50.0 : userResults.get(userResults.size() - 1).getPercentage();
+        double latestAssessmentPercentage = userResults.isEmpty() ? 65.0 : userResults.get(userResults.size() - 1).getPercentage();
 
         List<Recommendation> generated = new ArrayList<>();
 
         if (hasSkillsOnboarded) {
             // =========================================================================
-            // CASE A: DYNAMIC TECHNICAL SKILL ASSESSMENT (100% UNTOUCHED)
-            // Math: Skill Match (50%) + Interest Match (20%) + Test Score (30%)
+            // CASE A: DYNAMIC TECHNICAL SKILL ASSESSMENT (NATURAL SCORE MODEL)
+            // Math: Skill Alignment (50%) + Interest Match (20%) + Test Score (30%)
             // =========================================================================
             for (Career career : allCareers) {
                 String cNameLower = career.getCareerName().toLowerCase();
@@ -150,10 +150,7 @@ public class RecommendationService {
                 double testScore = (latestAssessmentPercentage / 100.0) * 30.0;
 
                 double totalMatchScore = skillPoints + interestScore + testScore;
-                double uniqueOffset = ((career.getId() * 7) % 11) * 0.3;
-                totalMatchScore += uniqueOffset;
-
-                totalMatchScore = Math.min(98.5, Math.max(25.0, totalMatchScore));
+                totalMatchScore = Math.min(98.5, Math.max(35.0, totalMatchScore));
                 totalMatchScore = Math.round(totalMatchScore * 10.0) / 10.0;
 
                 Recommendation rec = new Recommendation();
@@ -164,24 +161,51 @@ public class RecommendationService {
             }
         } else {
             // =========================================================================
-            // CASE B: CAREER DISCOVERY ASSESSMENT (PURE DYNAMIC 2-COMPONENT MODEL)
-            // Math: Domain Interest Fit (40%) + Assessment Test Score (60%)
+            // CASE B: CAREER DISCOVERY ASSESSMENT (NATURAL DOMAIN PROFILING)
+            // Math: Performance-Scaled Base Domain Match + Interest Boost
             // =========================================================================
+            double perfFactor = 0.55 + (latestAssessmentPercentage / 200.0);
+
             for (Career career : allCareers) {
                 String cNameLower = career.getCareerName().toLowerCase();
                 String cDescLower = (career.getDescription() != null ? career.getDescription() : "").toLowerCase();
 
-                // Component 1: Domain Interest Fit (40% Weight)
-                double interestPoints = 15.0; // Baseline fit
+                // Dynamic Domain Baseline based on cognitive & technical complexity
+                double baseDomainScore = 65.0;
+                if (cNameLower.contains("data scientist") || cNameLower.contains("ai") || cNameLower.contains("machine learning")) {
+                    baseDomainScore = 88.0;
+                } else if (cNameLower.contains("java") || cNameLower.contains("full stack") || cNameLower.contains("software engineer")) {
+                    baseDomainScore = 84.0;
+                } else if (cNameLower.contains("cloud") || cNameLower.contains("devops")) {
+                    baseDomainScore = 79.0;
+                } else if (cNameLower.contains("cyber") || cNameLower.contains("security")) {
+                    baseDomainScore = 77.0;
+                } else if (cNameLower.contains("backend") || cNameLower.contains("database") || cNameLower.contains("dba")) {
+                    baseDomainScore = 76.0;
+                } else if (cNameLower.contains("mobile") || cNameLower.contains("android") || cNameLower.contains("ios")) {
+                    baseDomainScore = 73.0;
+                } else if (cNameLower.contains("frontend") || cNameLower.contains("ui") || cNameLower.contains("web")) {
+                    baseDomainScore = 70.0;
+                } else if (cNameLower.contains("qa") || cNameLower.contains("testing") || cNameLower.contains("quality")) {
+                    baseDomainScore = 67.0;
+                } else if (cNameLower.contains("business") || cNameLower.contains("analyst") || cNameLower.contains("financial")) {
+                    baseDomainScore = 62.0;
+                } else if (cNameLower.contains("marketing") || cNameLower.contains("hr") || cNameLower.contains("manager")) {
+                    baseDomainScore = 55.0;
+                }
+
+                // Component 1: Performance-Scaled Base Match
+                double scaledBase = baseDomainScore * perfFactor;
+
+                // Component 2: Interest Fit Boost
+                double interestBoost = 0.0;
                 if (!userInterestNames.isEmpty()) {
                     boolean directMatch = userInterestNames.stream().anyMatch(in -> 
                         cNameLower.contains(in) || in.contains(cNameLower) || cDescLower.contains(in)
                     );
-
                     if (directMatch) {
-                        interestPoints = 40.0;
+                        interestBoost = 10.0;
                     } else {
-                        // Check partial keyword matches
                         boolean partialMatch = userInterestNames.stream().anyMatch(in -> {
                             String[] words = in.split("\s+");
                             for (String w : words) {
@@ -189,18 +213,12 @@ public class RecommendationService {
                             }
                             return false;
                         });
-                        interestPoints = partialMatch ? 28.0 : 18.0;
+                        interestBoost = partialMatch ? 5.0 : 0.0;
                     }
                 }
 
-                // Component 2: Assessment Test Score (60% Weight)
-                double testPoints = (latestAssessmentPercentage / 100.0) * 60.0;
-
-                // Unique offset per career ID to prevent duplicate ties
-                double uniqueOffset = ((career.getId() * 11) % 13) * 0.3;
-
-                double totalMatchScore = interestPoints + testPoints + uniqueOffset;
-                totalMatchScore = Math.min(98.5, Math.max(25.0, totalMatchScore));
+                double totalMatchScore = scaledBase + interestBoost;
+                totalMatchScore = Math.min(98.5, Math.max(35.0, totalMatchScore));
                 totalMatchScore = Math.round(totalMatchScore * 10.0) / 10.0;
 
                 Recommendation rec = new Recommendation();

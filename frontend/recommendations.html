@@ -475,6 +475,7 @@ body.admin-body {
 <script src="js/api.js"></script>
 <script>
 let currentRecommendations = [];
+let hasTakenAssessmentFlag = false;
 let currentViewMode = 'TOP3';
 
 function setMatchViewMode(mode) {
@@ -508,15 +509,20 @@ function renderRecommendations() {
     const container = document.getElementById('recommendationsContainer');
     if (!container) return;
 
-    if (!currentRecommendations || currentRecommendations.length === 0) {
+    if (!hasTakenAssessmentFlag || !currentRecommendations || currentRecommendations.length === 0) {
         container.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-search" style="font-size:3rem; color:var(--text-muted); margin-bottom:15px;"></i>
-                <h2 style="color:var(--bg-dark-blue);">No Assessment Test Completed Yet</h2>
-                <p style="color:var(--text-muted); max-width:500px; margin:0 auto 20px auto;">Take your evaluation test to calculate personalized career match percentages!</p>
-                <a href="take-assessment.html?id=1" class="btn-cyan"><i class="fas fa-play-circle"></i> Start Assessment Test Now</a>
+            <div class="empty-state" style="text-align:center; padding:60px 20px; background:white; border-radius:18px; border:1px solid var(--border-color); max-width:650px; margin:40px auto; box-shadow:0 10px 30px rgba(0,0,0,0.03);">
+                <i class="fas fa-clipboard-check" style="font-size:3.5rem; color:var(--primary-cyan); margin-bottom:20px; display:inline-block;"></i>
+                <h2 style="color:var(--bg-dark-blue); font-weight:700; margin-bottom:10px;">No Assessment Test Completed Yet</h2>
+                <p style="color:var(--text-muted); max-width:480px; margin:0 auto 25px auto; line-height:1.6;">
+                    Career match percentages are calculated based on your assessment performance. Please complete your evaluation test first to unlock your personalized AI career recommendations!
+                </p>
+                <a href="take-assessment.html?id=1" class="btn-cyan" style="padding:14px 30px; font-size:1rem;">
+                    <i class="fas fa-play-circle"></i> Start Assessment Test Now
+                </a>
             </div>
         `;
+        document.getElementById('totalCareerCount').innerText = '0';
         return;
     }
 
@@ -696,7 +702,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     try {
         const data = await apiRequest(`/v1/recommendations/${user.id}`);
-        if (data && data.recommendations) {
+        hasTakenAssessmentFlag = data && data.hasTakenAssessment === true;
+        if (data && data.recommendations && hasTakenAssessmentFlag) {
             currentRecommendations = data.recommendations;
             document.getElementById('totalCareerCount').innerText = currentRecommendations.length;
             renderRecommendations();

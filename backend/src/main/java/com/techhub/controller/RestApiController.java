@@ -138,7 +138,7 @@ public class RestApiController {
         return ResponseEntity.ok(Map.of("message", "Onboarding completed successfully!"));
     }
 
-        // Get Recommendations Data
+            // Get Recommendations Data
     @GetMapping("/recommendations/{userId}")
     public ResponseEntity<?> getRecommendations(@PathVariable Long userId) {
         User user = userService.findById(userId);
@@ -146,11 +146,17 @@ public class RestApiController {
             return ResponseEntity.status(404).body(Map.of("message", "User not found"));
         }
 
-        List<Recommendation> recommendations = recommendationService.findByUserId(userId);
-        if (recommendations == null || recommendations.isEmpty()) {
-            try {
-                recommendations = recommendationService.generateForUser(userId);
-            } catch (Exception ignored) {}
+        List<Result> userResults = resultService.findByUserId(userId);
+        boolean hasTakenAssessment = userResults != null && !userResults.isEmpty();
+
+        List<Recommendation> recommendations = null;
+        if (hasTakenAssessment) {
+            recommendations = recommendationService.findByUserId(userId);
+            if (recommendations == null || recommendations.isEmpty()) {
+                try {
+                    recommendations = recommendationService.generateForUser(userId);
+                } catch (Exception ignored) {}
+            }
         }
 
         List<Career> careers = careerService.findAll();
@@ -158,7 +164,7 @@ public class RestApiController {
         for (Career c : careers) careerMap.put(c.getId(), c);
 
         List<Map<String, Object>> recDetails = new ArrayList<>();
-        if (recommendations != null) {
+        if (hasTakenAssessment && recommendations != null) {
             for (Recommendation r : recommendations) {
                 Career c = careerMap.get(r.getCareerId());
                 Map<String, Object> map = new HashMap<>();
@@ -173,16 +179,16 @@ public class RestApiController {
             }
         }
 
-        List<Result> userResults = resultService.findByUserId(userId);
         List<UserSkill> userSkills = userSkillRepository.findByUserId(userId);
         List<Interest> userInterests = interestService.getUserInterests(userId);
         List<Skill> masterSkills = skillRepository.findAll();
 
         Map<String, Object> data = new HashMap<>();
         data.put("user", user);
+        data.put("hasTakenAssessment", hasTakenAssessment);
         data.put("recommendations", recDetails);
         data.put("careers", careers);
-        data.put("userResults", userResults);
+        data.put("userResults", userResults != null ? userResults : Collections.emptyList());
         data.put("userSkills", userSkills);
         data.put("userInterests", userInterests);
         data.put("masterSkills", masterSkills);
