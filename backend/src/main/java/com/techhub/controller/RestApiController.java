@@ -51,6 +51,23 @@ public class RestApiController {
     @Autowired
     private AssessmentRepository assessmentRepository;
 
+    // Helper for safe Long list parsing
+    private List<Long> parseLongList(Object val1, Object val2) {
+        Object val = val1 != null ? val1 : val2;
+        if (val instanceof List<?> list) {
+            List<Long> result = new ArrayList<>();
+            for (Object item : list) {
+                if (item != null) {
+                    try {
+                        result.add(Long.valueOf(item.toString()));
+                    } catch (Exception ignored) {}
+                }
+            }
+            return result;
+        }
+        return Collections.emptyList();
+    }
+
     // Get current user session
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUser(HttpSession session) {
@@ -123,14 +140,13 @@ public class RestApiController {
     // Submit Onboarding skills & interests
     @PostMapping("/onboarding/submit")
     public ResponseEntity<?> submitOnboarding(@RequestBody Map<String, Object> body) {
+        if (body.get("userId") == null) {
+            return ResponseEntity.badRequest().body(Map.of("message", "User ID is required"));
+        }
         Long userId = Long.valueOf(body.get("userId").toString());
-        List<Integer> pSkills = (List<Integer>) body.get("primarySkills");
-        List<Integer> sSkills = (List<Integer>) body.get("secondarySkills");
-        List<Integer> interests = (List<Integer>) body.get("interests");
-
-        List<Long> primarySkills = pSkills != null ? pSkills.stream().map(Long::valueOf).toList() : null;
-        List<Long> secondarySkills = sSkills != null ? sSkills.stream().map(Long::valueOf).toList() : null;
-        List<Long> userInterests = interests != null ? interests.stream().map(Long::valueOf).toList() : null;
+        List<Long> primarySkills = parseLongList(body.get("primarySkills"), body.get("primarySkillIds"));
+        List<Long> secondarySkills = parseLongList(body.get("secondarySkills"), body.get("secondarySkillIds"));
+        List<Long> userInterests = parseLongList(body.get("interests"), body.get("interestIds"));
 
         skillService.saveUserSkills(userId, primarySkills, secondarySkills);
         interestService.saveUserInterests(userId, userInterests);
@@ -138,7 +154,7 @@ public class RestApiController {
         return ResponseEntity.ok(Map.of("message", "Onboarding completed successfully!"));
     }
 
-            // Get Recommendations Data
+    // Get Recommendations Data
     @GetMapping("/recommendations/{userId}")
     public ResponseEntity<?> getRecommendations(@PathVariable Long userId) {
         User user = userService.findById(userId);
@@ -210,7 +226,6 @@ public class RestApiController {
         boolean hasSkills = primarySkills != null && !primarySkills.isEmpty();
 
         if (hasSkills) {
-            // CASE A: User HAS selected skills -> 15 Primary Skill Questions + 15 Aptitude/CS Questions
             List<Skill> top5Skills = new ArrayList<>(primarySkills.subList(0, Math.min(5, primarySkills.size())));
             int qPerSkill = 15 / top5Skills.size();
 
@@ -228,7 +243,6 @@ public class RestApiController {
                 questions = new ArrayList<>(questions.subList(0, 15));
             }
 
-            // Fill remaining up to 30 with Aptitude, Logic, English, CS Fundamentals
             List<Question> commonQs = questionRepository.findRandomCommonQuestions(30 - questions.size());
             if (commonQs != null) {
                 for (Question q : commonQs) {
@@ -237,7 +251,6 @@ public class RestApiController {
                 }
             }
         } else {
-            // CASE B: User HAS NOT selected skills -> Career Discovery & Strength Identification Test (30 Aptitude, Logic, English & CS Fundamentals questions ONLY)
             List<Question> discoveryQs = questionRepository.findRandomCommonQuestions(30);
             if (discoveryQs != null) {
                 questions.addAll(discoveryQs);
@@ -271,9 +284,13 @@ public class RestApiController {
 
     // Submit Assessment
     @PostMapping("/assessment/submit")
+    @SuppressWarnings("unchecked")
     public ResponseEntity<?> submitAssessment(@RequestBody Map<String, Object> body) {
+        if (body.get("userId") == null) {
+            return ResponseEntity.badRequest().body(Map.of("message", "User ID is required"));
+        }
         Long userId = Long.valueOf(body.get("userId").toString());
-        Long assessmentId = Long.valueOf(body.get("assessmentId").toString());
+        Long assessmentId = body.get("assessmentId") != null ? Long.valueOf(body.get("assessmentId").toString()) : 1L;
         Map<String, Object> rawAnswers = (Map<String, Object>) body.get("answers");
 
         Map<Long, String> answers = new HashMap<>();
@@ -294,7 +311,6 @@ public class RestApiController {
 
         Result result = resultService.evaluateAndSave(user, assessment, answers);
 
-        // Generate recommendations
         try {
             recommendationService.generateForUser(userId);
         } catch (Exception ignored) {}
@@ -302,9 +318,7 @@ public class RestApiController {
         return ResponseEntity.ok(Map.of("message", "Assessment submitted successfully!", "result", result != null ? result : Map.of()));
     }
 
-    // ==========================================
     // ADMIN ENDPOINTS
-    // ==========================================
 
     @GetMapping("/admin/stats")
     public ResponseEntity<?> getAdminStats() {
@@ -404,8 +418,6 @@ public class RestApiController {
         return ResponseEntity.ok(Map.of("message", "Assessment deleted successfully"));
     }
 
-
-
     @PutMapping("/admin/questions/{id}")
     public ResponseEntity<?> updateQuestion(@PathVariable Long id, @RequestBody Question question) {
         question.setId(id);
@@ -422,8 +434,6 @@ public class RestApiController {
         Career updated = careerService.save(career);
         return ResponseEntity.ok(updated);
     }
-
-
 
     @GetMapping("/admin/recommendations")
     public ResponseEntity<?> getAdminRecommendations() {
@@ -492,8 +502,6 @@ public class RestApiController {
         ));
     }
 
-
-
     @GetMapping("/admin/analytics")
     public ResponseEntity<?> getAdminAnalytics() {
         List<User> users = userService.findAll();
@@ -508,7 +516,6 @@ public class RestApiController {
 
         int totalDbRecords = userCount + asmntCount + qCount + careerCount;
 
-        // Group recommendations by career name for chart
         Map<String, Integer> careerCounts = new HashMap<>();
         for (User u : users) {
             List<Recommendation> recs = recommendationService.findByUserId(u.getId());
@@ -524,7 +531,6 @@ public class RestApiController {
             }
         }
 
-        // Fallback default chart distribution if zero completed tests
         if (careerCounts.isEmpty()) {
             careerCounts.put("Java Developer", 12);
             careerCounts.put("Full Stack Developer", 15);
@@ -544,8 +550,6 @@ public class RestApiController {
         ));
     }
 
-
-
     @GetMapping("/admin/logout")
     public ResponseEntity<?> adminLogoutGet(HttpSession session) {
         if (session != null) {
@@ -562,9 +566,7 @@ public class RestApiController {
         return ResponseEntity.ok(Map.of("message", "Admin logged out successfully"));
     }
 
-
-
-            // Get Detailed Assessment Results & Explanation Report for Student - 100% Dynamic
+    // Get Detailed Assessment Results & Explanation Report
     @GetMapping("/assessment/results/{userId}")
     public ResponseEntity<?> getDetailedAssessmentResults(@PathVariable Long userId) {
         User user = userService.findById(userId);
@@ -588,7 +590,6 @@ public class RestApiController {
         Result latestResult = results.get(results.size() - 1);
         Long assessmentId = latestResult.getAssessmentId() != null ? latestResult.getAssessmentId() : 1L;
 
-        // Parse user answers JSON map: qId (Long) -> choice (String)
         Map<Long, String> userAnswersMap = new LinkedHashMap<>();
         if (latestResult.getUserAnswersJson() != null && !latestResult.getUserAnswersJson().isEmpty()) {
             try {
@@ -602,7 +603,6 @@ public class RestApiController {
             } catch (Exception ignored) {}
         }
 
-        // Fetch attempted questions first, then fill remaining up to 30
         List<Question> questions = new ArrayList<>();
         Set<Long> loadedQIds = new HashSet<>();
 
@@ -711,7 +711,7 @@ public class RestApiController {
         else if ("C".equalsIgnoreCase(correctKey)) correctText = q.getOptionC();
         else if ("D".equalsIgnoreCase(correctKey)) correctText = q.getOptionD();
 
-        return "Option " + correctKey + " (\"" + correctText + "\") is correct because it correctly fulfills the underlying technical specifications and rules for " + (q.getSkillTag() != null ? q.getSkillTag() : "this topic") + ".";
+        return "Option " + correctKey + " (" + correctText + ") is correct because it correctly fulfills the underlying technical specifications and rules for " + (q.getSkillTag() != null ? q.getSkillTag() : "this topic") + ".";
     }
 
 }
