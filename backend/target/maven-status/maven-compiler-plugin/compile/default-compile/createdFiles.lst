@@ -8,6 +8,7 @@ com\techhub\controller\WebController.class
 com\techhub\entity\User.class
 com\techhub\entity\CareerSkill.class
 com\techhub\service\UserService.class
+com\techhub\controller\RestApiController$1.class
 com\techhub\service\QuestionService.class
 com\techhub\dto\AssessmentRequest.class
 com\techhub\entity\UserSkill.class

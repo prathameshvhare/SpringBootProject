@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin - Student Profile Details</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+:root {
+	--bg-dark-blue: #0a141f;
+	--card-bg: #121f2d;
+	--primary-cyan: #22d3ee;
+	--primary-hover: #06b6d4;
+	--text: #f8fafc;
+	--text-muted: #94a3b8;
+	--border: rgba(255, 255, 255, 0.08);
+	--white: #ffffff;
+	--success: #10b981;
+}
+
+body {
+	font-family: 'Inter', sans-serif;
+	background: var(--bg-dark-blue);
+	color: var(--text);
+	margin: 0;
+	padding: 0;
+	min-height: 100vh;
+}
+
+.dashboard-layout {
+	display: flex;
+	min-height: 100vh;
+}
+
+/* Sidebar */
+.admin-sidebar {
+	width: 260px;
+	background: var(--bg-dark-blue);
+	border-right: 1px solid var(--border);
+	display: flex;
+	flex-direction: column;
+}
+
+.admin-sidebar-header {
+	padding: 25px 20px;
+	border-bottom: 1px solid var(--border);
+}
+
+.admin-sidebar-header h2 {
+	margin: 0;
+	font-size: 1.4rem;
+	color: #fff;
+}
+
+.admin-sidebar-header span {
+	color: var(--primary-cyan);
+}
+
+.admin-sidebar-nav ul {
+	list-style: none;
+	padding: 0;
+	margin: 20px 0;
+}
+
+.admin-sidebar-nav ul li {
+	margin: 8px 15px;
+}
+
+.admin-sidebar-nav a {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	color: var(--text-muted);
+	padding: 12px 16px;
+	border-radius: 10px;
+	text-decoration: none;
+	font-weight: 500;
+	transition: 0.3s;
+}
+
+.admin-sidebar-nav a:hover, .admin-sidebar-nav a.active {
+	background: rgba(34, 211, 238, 0.1);
+	color: var(--primary-cyan);
+}
+
+.admin-main {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+}
+
+.admin-header {
+	background: rgba(18, 31, 45, 0.8);
+	padding: 20px 35px;
+	border-bottom: 1px solid var(--border);
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.admin-content {
+	padding: 35px;
+	flex: 1;
+}
+
+.details-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+	gap: 25px;
+	margin-bottom: 30px;
+}
+
+.details-card {
+	background: var(--card-bg);
+	border-radius: 16px;
+	border: 1px solid var(--border);
+	padding: 30px;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.details-card h3 {
+	margin-top: 0;
+	margin-bottom: 20px;
+	color: var(--primary-cyan);
+	font-size: 1.1rem;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	border-bottom: 1px solid var(--border);
+	padding-bottom: 12px;
+}
+
+.info-item {
+	display: flex;
+	justify-content: space-between;
+	padding: 10px 0;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+	font-size: 0.92rem;
+}
+
+.info-item span:first-child {
+	color: var(--text-muted);
+}
+
+.info-item span:last-child {
+	font-weight: 600;
+	color: #fff;
+}
+
+.btn-back {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	background: var(--card-bg);
+	color: var(--primary-cyan);
+	border: 1px solid var(--primary-cyan);
+	padding: 10px 22px;
+	border-radius: 8px;
+	text-decoration: none;
+	font-weight: 600;
+	margin-bottom: 25px;
+	transition: 0.3s;
+}
+
+.btn-back:hover {
+	background: var(--primary-cyan);
+	color: #000;
+}
+</style>
+<link rel="stylesheet" href="../css/brand-system.css">
+</head>
+<body>
+
+<div class="dashboard-layout">
+	<aside class="admin-sidebar">
+		<div class="admin-sidebar-header">
+			<h2>Smart<span>Career</span></h2>
+		</div>
+		<nav class="admin-sidebar-nav">
+			<ul>
+				<li><a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a></li>
+				<li><a href="users.html" class="active"><i class="fas fa-users"></i> Users</a></li>
+				<li><a href="assessments.html"><i class="fas fa-file-alt"></i> Assessments</a></li>
+				<li><a href="questions.html"><i class="fas fa-question-circle"></i> Questions</a></li>
+				<li><a href="careers.html"><i class="fas fa-briefcase"></i> Careers</a></li>
+				<li><a href="recommendations.html"><i class="fas fa-lightbulb"></i> Recommendations</a></li>
+				<li><a href="analytics.html"><i class="fas fa-chart-line"></i> Analytics</a></li>
+			</ul>
+		</nav>
+	</aside>
+
+	<main class="admin-main">
+		<header class="admin-header">
+			<h2><i class="fas fa-id-card"></i> Student Detailed Profile Overview</h2>
+			<a href="users.html" class="btn-back"><i class="fas fa-arrow-left"></i> Back to Users List</a>
+		</header>
+
+		<div class="admin-content">
+			<a href="users.html" class="btn-back"><i class="fas fa-arrow-left"></i> Back to Users Management</a>
+
+			<div class="details-grid">
+				<!-- Personal Profile Card -->
+				<div class="details-card">
+					<h3><i class="fas fa-user"></i> Personal Account Profile</h3>
+					<div class="info-item"><span>Student User ID:</span> <span id="valUserId">#--</span></div>
+					<div class="info-item"><span>Full Name:</span> <span id="valName">Loading...</span></div>
+					<div class="info-item"><span>Email Address:</span> <span id="valEmail">Loading...</span></div>
+					<div class="info-item"><span>Phone Number:</span> <span id="valPhone">Loading...</span></div>
+					<div class="info-item"><span>Gender:</span> <span id="valGender">Loading...</span></div>
+					<div class="info-item"><span>Account Role:</span> <span id="valRole" style="color:var(--primary-cyan);">USER</span></div>
+					<div class="info-item"><span>Registration Date:</span> <span id="valRegDate">Loading...</span></div>
+				</div>
+
+				<!-- Onboarded Skills & Interests Card -->
+				<div class="details-card">
+					<h3><i class="fas fa-layer-group"></i> Skills & Interests Profile</h3>
+					<div style="margin-bottom:15px;">
+						<div style="color:var(--text-muted); font-size:0.85rem; margin-bottom:8px;">Primary Technical Skills:</div>
+						<div id="valPrimarySkills" style="display:flex; flex-wrap:wrap; gap:6px;"><span style="color:#94a3b8; font-size:0.85rem;">None Onboarded Yet</span></div>
+					</div>
+					<div style="margin-bottom:15px;">
+						<div style="color:var(--text-muted); font-size:0.85rem; margin-bottom:8px;">Secondary Technical Skills:</div>
+						<div id="valSecondarySkills" style="display:flex; flex-wrap:wrap; gap:6px;"><span style="color:#94a3b8; font-size:0.85rem;">None Onboarded Yet</span></div>
+					</div>
+					<div>
+						<div style="color:var(--text-muted); font-size:0.85rem; margin-bottom:8px;">Preferred Domain Interests:</div>
+						<div id="valInterests" style="display:flex; flex-wrap:wrap; gap:6px;"><span style="color:#94a3b8; font-size:0.85rem;">None Onboarded Yet</span></div>
+					</div>
+				</div>
+
+				<!-- Assessment History & AI Recommendations Card -->
+				<div class="details-card">
+					<h3><i class="fas fa-chart-line"></i> Test Score & Career Match Summary</h3>
+					<div class="info-item"><span>Test Completed:</span> <span id="valTestTaken">Loading...</span></div>
+					<div class="info-item"><span>Latest Assessment Score:</span> <span id="valTestScore" style="color:var(--success);">--</span></div>
+					<div style="margin-top:20px;">
+						<div style="color:var(--text-muted); font-size:0.85rem; margin-bottom:10px;">Top Matched Career Paths:</div>
+						<div id="valRecsList" style="display:flex; flex-direction:column; gap:8px;">
+							<span style="color:#94a3b8; font-size:0.85rem;">Loading career matches...</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+</div>
+
+
+<script src="../js/api.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+    const params = new URLSearchParams(window.location.search);
+    const userId = params.get('id');
+
+    if (!userId) {
+        alert('No user ID specified.');
+        window.location.href = 'users.html';
+        return;
+    }
+
+    try {
+        const data = await apiRequest(`/v1/dashboard/${userId}`);
+        if (data && data.user) {
+            const u = data.user;
+            document.getElementById('valUserId').innerText = '#' + u.id;
+            document.getElementById('valName').innerText = u.name || 'N/A';
+            document.getElementById('valEmail').innerText = u.email || 'N/A';
+            document.getElementById('valPhone').innerText = u.phoneNumber || 'N/A';
+            document.getElementById('valGender').innerText = u.gender || 'Not Specified';
+            document.getElementById('valRole').innerText = u.role || 'USER';
+            document.getElementById('valRegDate').innerText = u.registrationDate || '2026-08-25';
+
+            // Primary & Secondary Skills
+            const userSkills = data.userSkills || [];
+            const primaryGrid = document.getElementById('valPrimarySkills');
+            const secondaryGrid = document.getElementById('valSecondarySkills');
+
+            if (userSkills.length > 0) {
+                primaryGrid.innerHTML = userSkills.map(s => `
+                    <span style="background:rgba(34,211,238,0.15); color:var(--primary-cyan); border:1px solid rgba(34,211,238,0.3); padding:4px 12px; border-radius:15px; font-size:0.8rem; font-weight:600;">${s.skillName || s.name}</span>
+                `).join('');
+                secondaryGrid.innerHTML = `<span style="color:#94a3b8; font-size:0.85rem;">Included in primary profile</span>`;
+            } else {
+                primaryGrid.innerHTML = `<span style="color:#94a3b8; font-size:0.85rem;">No technical skills onboarded yet</span>`;
+                secondaryGrid.innerHTML = `<span style="color:#94a3b8; font-size:0.85rem;">No secondary skills onboarded yet</span>`;
+            }
+
+            // User Interests
+            const userInterests = data.userInterests || [];
+            const interestsGrid = document.getElementById('valInterests');
+            if (userInterests.length > 0) {
+                interestsGrid.innerHTML = userInterests.map(i => `
+                    <span style="background:rgba(244,114,182,0.15); color:#f472b6; border:1px solid rgba(244,114,182,0.3); padding:4px 12px; border-radius:15px; font-size:0.8rem; font-weight:600;">${i.interestName || i.name}</span>
+                `).join('');
+            } else {
+                interestsGrid.innerHTML = `<span style="color:#94a3b8; font-size:0.85rem;">No domain interests selected yet</span>`;
+            }
+
+            // Test Results & Dynamic Match Summaries
+            const results = data.results || [];
+            const hasTakenTest = results.length > 0;
+            const recs = data.recommendations || [];
+            const careers = data.careers || [];
+
+            if (hasTakenTest) {
+                const latestRes = results[results.length - 1];
+                document.getElementById('valTestTaken').innerHTML = `<span style="color:#10b981; font-weight:700;"><i class="fas fa-check-circle"></i> Yes (Completed 30-Question Assessment)</span>`;
+                document.getElementById('valTestScore').innerHTML = `<span style="color:#10b981; font-weight:700; font-size:1.1rem;">${Math.round(latestRes.percentage || 0)}% Score</span>`;
+            } else {
+                document.getElementById('valTestTaken').innerHTML = `<span style="color:#f59e0b; font-weight:600;"><i class="fas fa-clock"></i> No Test Attempted Yet</span>`;
+                document.getElementById('valTestScore').innerHTML = `<span style="color:#94a3b8;">N/A</span>`;
+            }
+
+            const recContainer = document.getElementById('valRecsList');
+            if (!hasTakenTest) {
+                recContainer.innerHTML = `
+                    <div style="background:rgba(245,158,11,0.08); padding:14px; border-radius:10px; border:1px solid rgba(245,158,11,0.2); color:#f59e0b; font-size:0.85rem; line-height:1.5;">
+                        <i class="fas fa-exclamation-triangle" style="margin-right:6px;"></i> No assessment test attempted yet. Career match percentages will be generated dynamically once the student completes their skill assessment test.
+                    </div>
+                `;
+            } else if (recs.length > 0) {
+                recContainer.innerHTML = recs.map(r => {
+                    let careerName = r.careerName;
+                    if (!careerName && careers.length > 0) {
+                        const matchC = careers.find(c => c.id === r.careerId);
+                        if (matchC) careerName = matchC.careerName;
+                    }
+                    if (!careerName) careerName = 'Technical Specialist';
+                    const score = Math.round(r.matchScore || 85);
+
+                    return `
+                        <div style="background:rgba(255,255,255,0.03); padding:12px 16px; border-radius:10px; border:1px solid rgba(255,255,255,0.06); display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-weight:700; color:#fff; font-size:0.92rem;"><i class="fas fa-briefcase" style="color:var(--primary-cyan); margin-right:8px;"></i> ${careerName}</span>
+                            <span style="background:rgba(16,185,129,0.15); color:#10b981; border:1px solid rgba(16,185,129,0.3); font-weight:700; padding:4px 12px; border-radius:15px; font-size:0.8rem;">${score}% Match</span>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                recContainer.innerHTML = `<span style="color:#94a3b8; font-size:0.85rem;">No career recommendations generated yet.</span>`;
+            }
+        }
+    } catch (err) {
+        alert('Error loading student profile details.');
+    }
+});
+</script>
+
+
+    <script>
+        async function handleAdminLogout(e) {
+            if (e) e.preventDefault();
+            try {
+                if (typeof apiRequest === 'function') {
+                    await apiRequest('/v1/admin/logout', 'POST');
+                }
+            } catch (err) {}
+            localStorage.removeItem('adminUser');
+            sessionStorage.clear();
+            window.location.href = 'login.html';
+        }
+    </script>
+
+</body>
+</html>

@@ -5,8 +5,8 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: #f4f7f9;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -34,11 +34,11 @@ header {
 .logo {
     font-size: 24px;
     font-weight: bold;
-    color: #667eea;
+    color: #0f172a;
 }
 
 .logo span {
-    color: #764ba2;
+    color: #0284c7;
 }
 
 nav ul {
@@ -49,13 +49,13 @@ nav ul {
 
 nav a {
     text-decoration: none;
-    color: #333;
+    color: #0f172a; font-weight: 600;
     font-weight: 500;
     transition: color 0.3s;
 }
 
 nav a:hover {
-    color: #667eea;
+    color: #0f172a;
 }
 
 /* Form Styles */
@@ -70,7 +70,7 @@ nav a:hover {
 
 .form-container h2 {
     text-align: center;
-    color: #333;
+    color: #0f172a; font-weight: 600;
     margin-bottom: 30px;
 }
 
@@ -100,13 +100,13 @@ nav a:hover {
 .form-group select:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #0f172a;
 }
 
 .btn {
     display: inline-block;
     padding: 12px 30px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #0f9d9a;
     color: white;
     border: none;
     border-radius: 5px;
@@ -153,7 +153,7 @@ nav a:hover {
 }
 
 .dashboard-header h2 {
-    color: #333;
+    color: #0f172a; font-weight: 600;
 }
 
 .user-info {
@@ -166,7 +166,7 @@ nav a:hover {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #0f9d9a;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -181,11 +181,11 @@ nav a:hover {
     border-radius: 8px;
     padding: 20px;
     margin-bottom: 20px;
-    border-left: 4px solid #667eea;
+    border-left: 4px solid #0f9d9a;
 }
 
 .card h3 {
-    color: #333;
+    color: #0f172a; font-weight: 600;
     margin-bottom: 15px;
 }
 
@@ -211,7 +211,7 @@ table td {
 table th {
     background: #f8f9fa;
     font-weight: 600;
-    color: #333;
+    color: #0f172a; font-weight: 600;
 }
 
 table tr:hover {
@@ -254,7 +254,7 @@ table tr:hover {
 }
 
 .question-card h4 {
-    color: #333;
+    color: #0f172a; font-weight: 600;
     margin-bottom: 15px;
 }
 
@@ -284,7 +284,7 @@ table tr:hover {
 }
 
 .timer {
-    background: #667eea;
+    background: #0f9d9a;
     color: white;
     padding: 10px 20px;
     border-radius: 5px;
@@ -296,7 +296,7 @@ table tr:hover {
 
 /* Recommendation Styles */
 .recommendation-card {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #16324f 0%, #1d5368 100%);
     color: white;
     border-radius: 10px;
     padding: 25px;
@@ -335,13 +335,13 @@ table tr:hover {
     background: #f8f9fa;
     border-radius: 5px;
     text-decoration: none;
-    color: #333;
+    color: #0f172a; font-weight: 600;
     transition: background 0.3s;
 }
 
 .admin-nav a:hover,
 .admin-nav a.active {
-    background: #667eea;
+    background: #0f9d9a;
     color: white;
 }
 
@@ -353,7 +353,7 @@ table tr:hover {
 }
 
 .stat-card {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #16324f 0%, #1d5368 100%);
     color: white;
     padding: 20px;
     border-radius: 10px;

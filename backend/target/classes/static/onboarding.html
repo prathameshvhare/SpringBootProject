@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive Smart Career Onboarding Wizard - SmartCareer</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+	--bg-dark-blue: #0f172a;
+	--card-bg: #ffffff;
+	--primary-cyan: #0284c7;
+	--primary-hover: #0369a1;
+	--text-main: #0f172a;
+	--text-muted: #475569;
+	--border: #cbd5e1;
+}
+
+body {
+	font-family: 'Plus Jakarta Sans', 'Poppins', sans-serif;
+	background-color: #f8fafc;
+	color: var(--text-main);
+	margin: 0;
+	padding: 0;
+	min-height: 100vh;
+}
+
+header {
+	background: var(--bg-dark-blue);
+	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+	padding: 18px 0;
+	position: sticky;
+	top: 0;
+	z-index: 100;
+}
+
+.header-content {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 0 20px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.logo {
+	font-size: 1.4rem;
+	font-weight: 800;
+	color: #ffffff;
+	text-decoration: none;
+}
+
+.logo span {
+	color: #38bdf8;
+}
+
+.container-main {
+	max-width: 1100px;
+	margin: 35px auto;
+	padding: 0 20px;
+}
+
+.onboarding-card {
+	background: #ffffff;
+	border-radius: 20px;
+	border: 1px solid #e2e8f0;
+	padding: 40px;
+	box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+}
+
+.onboarding-header {
+	margin-bottom: 30px;
+}
+
+.onboarding-header h1 {
+	font-size: 1.8rem;
+	font-weight: 800;
+	margin: 0 0 10px 0;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	color: #0f172a;
+}
+
+.onboarding-header h1 i {
+	color: var(--primary-cyan);
+}
+
+.onboarding-header p {
+	color: var(--text-muted);
+	font-size: 0.95rem;
+	margin: 0;
+}
+
+.badge-info {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	background: #e0f2fe;
+	color: #0369a1;
+	border: 1px solid #7dd3fc;
+	padding: 6px 14px;
+	border-radius: 20px;
+	font-size: 0.85rem;
+	font-weight: 700;
+	margin-top: 15px;
+}
+
+.section-title {
+	font-size: 1.1rem;
+	font-weight: 700;
+	margin: 25px 0 12px 0;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	color: #0f172a;
+}
+
+.section-title i {
+	color: var(--primary-cyan);
+}
+
+.skills-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+	gap: 14px;
+	margin-bottom: 25px;
+}
+
+.skill-checkbox-card {
+	background: #ffffff;
+	border: 1.5px solid #cbd5e1;
+	border-radius: 12px;
+	padding: 14px 18px;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	user-select: none;
+}
+
+.skill-checkbox-card:hover {
+	border-color: var(--primary-cyan);
+	background: #f0f9ff;
+}
+
+.skill-checkbox-card.selected {
+	border-color: var(--primary-cyan);
+	background: #e0f2fe;
+}
+
+.skill-checkbox-card.disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+	pointer-events: none;
+}
+
+.skill-checkbox-card input[type="checkbox"],
+.skill-checkbox-card input[type="radio"] {
+	width: 18px;
+	height: 18px;
+	accent-color: var(--primary-cyan);
+	cursor: pointer;
+}
+
+.skill-name {
+	font-size: 0.95rem;
+	font-weight: 700;
+	color: #0f172a;
+}
+
+.skill-checkbox-card.selected .skill-name {
+	color: #0369a1;
+}
+
+.btn-submit {
+	width: 100%;
+	padding: 16px;
+	border: none;
+	border-radius: 12px;
+	background: var(--primary-cyan);
+	color: #ffffff;
+	font-size: 1.05rem;
+	font-weight: 700;
+	cursor: pointer;
+	transition: all 0.25s ease;
+	margin-top: 35px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 10px;
+	box-shadow: 0 4px 15px rgba(2, 132, 199, 0.25);
+}
+
+.btn-submit:hover {
+	background: var(--primary-hover);
+	transform: translateY(-1px);
+	box-shadow: 0 6px 20px rgba(2, 132, 199, 0.35);
+}
+
+.counter-badge {
+	margin-left: auto;
+	font-size: 0.82rem;
+	font-weight: 700;
+	color: #0369a1;
+	background: #e0f2fe;
+	padding: 4px 12px;
+	border-radius: 12px;
+}
+</style>
+<link rel="stylesheet" href="css/brand-system.css">
+</head>
+<body>
+	<header>
+		<div class="header-content">
+			<a href="dashboard.html" class="logo">Smart<span>Career</span></a>
+			<a href="dashboard.html" style="color:#ffffff; text-decoration:none; font-weight:600; font-size:0.9rem;">
+				<i class="fas fa-arrow-left"></i> Back to Dashboard
+			</a>
+		</div>
+	</header>
+
+	<div class="container-main">
+		<!-- Guided Journey Progress Tracker -->
+		<div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 16px; padding: 18px 24px; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px; box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);">
+			<div style="display: flex; align-items: center; gap: 12px;">
+				<div style="width: 38px; height: 38px; border-radius: 50%; background: #e0f2fe; color: #0369a1; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1rem;">1</div>
+				<div>
+					<div style="font-weight: 700; font-size: 0.95rem; color: #0f172a;">Step 1 of 3: Profile Setup & Onboarding</div>
+					<div style="font-size: 0.82rem; color: #64748b;">Set your target goal & select known skills or discovery test mode</div>
+				</div>
+			</div>
+			<div style="display: flex; align-items: center; gap: 10px;">
+				<span style="background: #e0f2fe; color: #0369a1; border: 1px solid #7dd3fc; font-size: 0.75rem; font-weight: 800; padding: 6px 14px; border-radius: 20px; text-transform: uppercase;">
+					<i class="fas fa-spinner fa-spin"></i> In Progress
+				</span>
+			</div>
+		</div>
+
+		<div class="onboarding-card">
+			<div class="onboarding-header">
+				<h1><i class="fas fa-magic"></i> Interactive Smart Onboarding Wizard</h1>
+				<p>Tell us about your background and career goal, or let our Discovery Assessment uncover your strengths.</p>
+				<div class="badge-info">
+					<i class="fas fa-shield-alt"></i> Multi-Domain Dynamic Career Guidance Engine
+				</div>
+			</div>
+
+			<!-- 3-STEP SMART CAREER ONBOARDING WIZARD -->
+			<div class="wizard-container" style="margin-bottom: 35px;">
+				<!-- STEP 1: Select Educational Background & Target Goal -->
+				<div class="section-title" style="margin-top: 10px;">
+					<i class="fas fa-graduation-cap"></i>
+					<span>Step 1: Select Your Background & Target Goal</span>
+				</div>
+				<div class="skills-grid" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-bottom: 25px;">
+					<label class="skill-checkbox-card selected" id="bg-card-it">
+						<input type="radio" name="backgroundGoal" value="IT_CORE" checked onchange="handleWizardChange()">
+						<div>
+							<div class="skill-name"><i class="fas fa-laptop-code" style="color: #0284c7; margin-right: 6px;"></i> IT / Tech Student</div>
+							<div style="font-size: 0.78rem; color: #475569; margin-top: 4px;">Target Software, Cloud, DevOps & AI Roles</div>
+						</div>
+					</label>
+					<label class="skill-checkbox-card" id="bg-card-biz">
+						<input type="radio" name="backgroundGoal" value="NON_IT_BIZ" onchange="handleWizardChange()">
+						<div>
+							<div class="skill-name"><i class="fas fa-chart-line" style="color: #059669; margin-right: 6px;"></i> Business & Finance</div>
+							<div style="font-size: 0.78rem; color: #475569; margin-top: 4px;">Target Business Analytics, Finance & Strategy</div>
+						</div>
+					</label>
+					<label class="skill-checkbox-card" id="bg-card-design">
+						<input type="radio" name="backgroundGoal" value="NON_IT_DESIGN" onchange="handleWizardChange()">
+						<div>
+							<div class="skill-name"><i class="fas fa-palette" style="color: #db2777; margin-right: 6px;"></i> Creative Arts & Design</div>
+							<div style="font-size: 0.78rem; color: #475569; margin-top: 4px;">Target UI/UX, Graphic Design & Digital Media</div>
+						</div>
+					</label>
+					<label class="skill-checkbox-card" id="bg-card-bridge">
+						<input type="radio" name="backgroundGoal" value="NON_IT_TO_IT" onchange="handleWizardChange()">
+						<div>
+							<div class="skill-name"><i class="fas fa-exchange-alt" style="color: #d97706; margin-right: 6px;"></i> Non-IT to IT Bridge</div>
+							<div style="font-size: 0.78rem; color: #475569; margin-top: 4px;">Transition from Non-IT into Tech (QA, UI/UX, BA)</div>
+						</div>
+					</label>
+				</div>
+
+				<!-- STEP 2: Choose Self-Awareness Path (2 STREAMLINED OPTIONS) -->
+				<div class="section-title">
+					<i class="fas fa-compass"></i>
+					<span>Step 2: What do you currently know about yourself?</span>
+				</div>
+				<div class="skills-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); margin-bottom: 25px;">
+					<label class="skill-checkbox-card selected" id="path-card-both">
+						<input type="radio" name="knowledgeState" value="DIRECT_BOTH" checked onchange="handleWizardChange()">
+						<div>
+							<div class="skill-name"><i class="fas fa-check-circle" style="color: #059669; margin-right: 6px;"></i> Option 1: Skills & Interests</div>
+							<div style="font-size: 0.78rem; color: #475569; margin-top: 4px;">"I know both my technical skills and domain interests"</div>
+						</div>
+					</label>
+					<label class="skill-checkbox-card" id="path-card-interests">
+						<input type="radio" name="knowledgeState" value="INTERESTS_ONLY" onchange="handleWizardChange()">
+						<div>
+							<div class="skill-name"><i class="fas fa-heart" style="color: #db2777; margin-right: 6px;"></i> Option 2: Interests ONLY (Skill Discovery Test)</div>
+							<div style="font-size: 0.78rem; color: #475569; margin-top: 4px;">"I know my domain interests, but need an assessment for skills"</div>
+						</div>
+					</label>
+				</div>
+			</div>
+
+			<!-- STEP 3 VIEW A: Discovery Assessment Container -->
+			<div id="discoveryContainer" style="display: none; background: #e0f2fe; border: 1.5px solid #7dd3fc; border-radius: 16px; padding: 30px; text-align: center; margin-bottom: 30px;">
+				<div style="width: 60px; height: 60px; border-radius: 50%; background: #ffffff; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto; box-shadow:0 4px 10px rgba(0,0,0,0.05);">
+					<i class="fas fa-magic" style="font-size: 1.8rem; color: #0284c7;"></i>
+				</div>
+				<h3 style="color: #0f172a; margin-bottom: 8px; font-weight: 700;">Career Discovery & Strengths Identification Test</h3>
+				<p style="font-size: 0.9rem; color: #334155; max-width: 600px; margin: 0 auto 20px auto; line-height: 1.6;">
+					Taking our 15-minute Discovery Assessment will automatically analyze your natural aptitude, problem-solving style, and work preferences to recommend your best matching career paths!
+				</p>
+				<a href="take-assessment.html?id=1" class="btn-submit" style="display: inline-flex; width: auto; padding: 14px 30px; font-size: 1rem; text-decoration: none;">
+					<i class="fas fa-play-circle"></i> Launch Discovery Assessment Test Now
+				</a>
+			</div>
+
+			<!-- STEP 3 VIEW B: Form Container for Checkboxes -->
+			<div id="formCheckboxesContainer">
+				<form action="/api/onboarding" method="post" id="onboardingForm">
+					<!-- Section 1: Primary Core Skills -->
+					<div id="skillsSectionContainer">
+						<div class="section-title">
+							<i class="fas fa-star"></i>
+							<span>Top Core Skills (Max 5)</span>
+							<span class="counter-badge" id="primaryCounter">0 / 5 Selected</span>
+						</div>
+						<p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">
+							These top skills will be verified through your dynamic assessment (~3–5 questions each).
+						</p>
+
+						<div class="skills-grid" id="primarySkillsGrid"></div>
+
+						<!-- Section 2: Secondary Skills -->
+						<div class="section-title">
+							<i class="fas fa-plus-circle"></i>
+							<span>Secondary / Additional Skills</span>
+						</div>
+						<p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">
+							Saved to your profile to enhance career matching without lengthening your assessment.
+						</p>
+
+						<div class="skills-grid" id="secondarySkillsGrid"></div>
+					</div>
+
+					<!-- Section 3: Domain Interests -->
+					<div id="interestsSectionContainer">
+						<div class="section-title">
+							<i class="fas fa-heart"></i>
+							<span>Domain Interests</span>
+						</div>
+						<div class="skills-grid" id="interestsGrid"></div>
+					</div>
+
+					<button type="submit" class="btn-submit">
+						<span>Save Profile & Continue</span>
+						<i class="fas fa-arrow-right"></i>
+					</button>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<script src="js/api.js"></script>
+	<script>
+		const MAX_PRIMARY = 5;
+
+		function handleWizardChange() {
+			const knowledge = document.querySelector('input[name="knowledgeState"]:checked').value;
+			const skillsSection = document.getElementById('skillsSectionContainer');
+			const interestsSection = document.getElementById('interestsSectionContainer');
+			const discoveryContainer = document.getElementById('discoveryContainer');
+			const formContainer = document.getElementById('formCheckboxesContainer');
+
+			document.querySelectorAll('input[name="backgroundGoal"]').forEach(radio => {
+				const card = radio.closest('.skill-checkbox-card');
+				if (radio.checked) card.classList.add('selected');
+				else card.classList.remove('selected');
+			});
+
+			document.querySelectorAll('input[name="knowledgeState"]').forEach(radio => {
+				const card = radio.closest('.skill-checkbox-card');
+				if (radio.checked) card.classList.add('selected');
+				else card.classList.remove('selected');
+			});
+
+			formContainer.style.display = 'block';
+			discoveryContainer.style.display = 'none';
+			if (knowledge === 'DIRECT_BOTH') {
+				skillsSection.style.display = 'block';
+				interestsSection.style.display = 'block';
+			} else {
+				skillsSection.style.display = 'none';
+				interestsSection.style.display = 'block';
+			}
+		}
+
+		let masterSkills = [];
+		let masterInterests = [];
+		let selectedPrimaryIds = new Set();
+		let selectedSecondaryIds = new Set();
+		let selectedInterestIds = new Set();
+
+		function updateCounters() {
+			const primaryCounter = document.getElementById('primaryCounter');
+			if (primaryCounter) {
+				primaryCounter.innerText = `${selectedPrimaryIds.size} / ${MAX_PRIMARY} Selected`;
+			}
+		}
+
+		function renderSkills() {
+			const primaryGrid = document.getElementById('primarySkillsGrid');
+			const secondaryGrid = document.getElementById('secondarySkillsGrid');
+			if (!primaryGrid || !secondaryGrid) return;
+
+			primaryGrid.innerHTML = masterSkills.map(s => {
+				const isChecked = selectedPrimaryIds.has(s.id);
+				const isDisabled = !isChecked && selectedPrimaryIds.size >= MAX_PRIMARY;
+				return `
+					<label class="skill-checkbox-card ${isChecked ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}">
+						<input type="checkbox" value="${s.id}" ${isChecked ? 'checked' : ''} ${isDisabled ? 'disabled' : ''} onchange="togglePrimarySkill(${s.id}, this)">
+						<span class="skill-name">${s.skillName}</span>
+					</label>
+				`;
+			}).join('');
+
+			secondaryGrid.innerHTML = masterSkills.map(s => {
+				const isChecked = selectedSecondaryIds.has(s.id);
+				const isPrimaryChecked = selectedPrimaryIds.has(s.id);
+				return `
+					<label class="skill-checkbox-card ${isChecked ? 'selected' : ''} ${isPrimaryChecked ? 'disabled' : ''}">
+						<input type="checkbox" value="${s.id}" ${isChecked ? 'checked' : ''} ${isPrimaryChecked ? 'disabled' : ''} onchange="toggleSecondarySkill(${s.id}, this)">
+						<span class="skill-name">${s.skillName}</span>
+					</label>
+				`;
+			}).join('');
+		}
+
+		function renderInterests() {
+			const grid = document.getElementById('interestsGrid');
+			if (!grid) return;
+			grid.innerHTML = masterInterests.map(i => {
+				const isChecked = selectedInterestIds.has(i.id);
+				return `
+					<label class="skill-checkbox-card ${isChecked ? 'selected' : ''}">
+						<input type="checkbox" value="${i.id}" ${isChecked ? 'checked' : ''} onchange="toggleInterest(${i.id}, this)">
+						<span class="skill-name">${i.interestName}</span>
+					</label>
+				`;
+			}).join('');
+		}
+
+		function togglePrimarySkill(id, checkbox) {
+			if (checkbox.checked) {
+				if (selectedPrimaryIds.size < MAX_PRIMARY) {
+					selectedPrimaryIds.add(id);
+					selectedSecondaryIds.delete(id);
+				} else {
+					checkbox.checked = false;
+				}
+			} else {
+				selectedPrimaryIds.delete(id);
+			}
+			updateCounters();
+			renderSkills();
+		}
+
+		function toggleSecondarySkill(id, checkbox) {
+			if (checkbox.checked) {
+				selectedSecondaryIds.add(id);
+			} else {
+				selectedSecondaryIds.delete(id);
+			}
+			renderSkills();
+		}
+
+		function toggleInterest(id, checkbox) {
+			if (checkbox.checked) {
+				selectedInterestIds.add(id);
+			} else {
+				selectedInterestIds.delete(id);
+			}
+			renderInterests();
+		}
+
+		document.addEventListener('DOMContentLoaded', async () => {
+			const user = requireAuth();
+			if (!user) return;
+
+			try {
+				const data = await apiRequest('/v1/onboarding/data');
+				if (data) {
+					masterSkills = data.skills || [];
+					masterInterests = data.interests || [];
+
+					renderSkills();
+					renderInterests();
+					updateCounters();
+				}
+			} catch (err) {
+				console.log('Error loading onboarding data');
+			}
+
+			const form = document.getElementById('onboardingForm');
+			if (form) {
+				form.addEventListener('submit', async (e) => {
+					e.preventDefault();
+					try {
+						await apiRequest('/v1/onboarding/submit', 'POST', {
+							userId: user.id,
+							primarySkillIds: Array.from(selectedPrimaryIds),
+							secondarySkillIds: Array.from(selectedSecondaryIds),
+							interestIds: Array.from(selectedInterestIds)
+						});
+						window.location.href = 'onboarding-success.html';
+					} catch (err) {
+						alert('Error saving profile onboarding. Please try again.');
+					}
+				});
+			}
+		});
+	</script>
+</body>
+</html>

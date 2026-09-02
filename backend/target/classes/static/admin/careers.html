@@ -1,0 +1,966 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manage Careers - Smart Career Recommendation</title>
+<link
+	href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+	rel="stylesheet">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style type="text/css">
+/* Executive Admin UI Color Palette (Royal Indigo & Slate Theme) */
+:root {
+	--primary-cyan: #818cf8;
+	--primary-hover: #6366f1;
+	--bg-dark-blue: #0f172a;
+	--admin-gold: #fbbf24;
+	--bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+	--success: #10b981;
+	--danger: #ef4444;
+	--warning: #f59e0b;
+	--bg: #f1f5f9;
+	--white: #ffffff;
+	--text: #0f172a;
+	--text-light: #f8fafc;
+	--text-muted: #64748b;
+	--border: #cbd5e1;
+}
+
+html, body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+}
+
+body.admin-body {
+	font-family: 'Poppins', sans-serif;
+	background: var(--bg);
+	color: var(--text);
+}
+
+/* Base Layout */
+.dashboard-layout {
+	display: flex;
+	flex-direction: row !important;
+	flex-wrap: nowrap !important;
+	height: 100vh;
+	width: 100vw;
+	overflow: hidden;
+}
+
+/* Fixed Sidebar */
+.admin-sidebar {
+	width: 260px;
+	min-width: 260px;
+	height: 100vh;
+	flex-shrink: 0;
+	background: var(--bg-dark-blue);
+	color: var(--text-light);
+	box-shadow: 5px 0 20px rgba(0, 0, 0, .05);
+	transition: margin-left 0.3s ease;
+	display: flex;
+	flex-direction: column;
+	position: relative;
+	z-index: 10;
+	overflow-y: auto;
+}
+
+.admin-sidebar.collapsed {
+	margin-left: -260px;
+}
+
+.admin-sidebar-header {
+	padding: 30px 20px;
+	text-align: center;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.admin-sidebar-header h2 {
+	color: var(--white);
+	font-size: 26px;
+	font-weight: 700;
+	margin: 0;
+}
+
+.admin-sidebar-header h2 span {
+	color: var(--primary-cyan);
+}
+
+.admin-sidebar-nav {
+	flex: 1;
+}
+
+.admin-sidebar-nav ul {
+	list-style: none;
+	padding: 0;
+	margin: 20px 0;
+}
+
+.admin-sidebar-nav ul li {
+	margin: 10px 15px;
+}
+
+.admin-sidebar-nav a {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	color: var(--text-muted);
+	padding: 14px 18px;
+	border-radius: 12px;
+	transition: .3s;
+	text-decoration: none;
+	font-weight: 500;
+}
+
+.admin-sidebar-nav a:hover, .admin-sidebar-nav a.active {
+	background: rgba(34, 211, 238, 0.1);
+	color: var(--primary-cyan);
+}
+
+.admin-sidebar-nav i {
+	width: 20px;
+	text-align: center;
+}
+
+.admin-sidebar-footer {
+	padding: 20px;
+	text-align: center;
+	color: var(--text-muted);
+	font-size: 12px;
+	border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Main Content Area */
+.admin-main {
+	flex: 1;
+	flex-grow: 1;
+	height: 100vh;
+	overflow-y: auto;
+	background: var(--bg);
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+}
+
+/* Header */
+.admin-header {
+	background: var(--white);
+	padding: 18px 35px;
+	box-shadow: 0 5px 20px rgba(0, 0, 0, .03);
+	border-bottom: 1px solid var(--border);
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	position: sticky;
+	top: 0;
+	z-index: 5;
+}
+
+.admin-header-left {
+	display: flex;
+	align-items: center;
+	gap: 15px;
+}
+
+.admin-header h1 {
+	color: var(--bg-dark-blue);
+	font-weight: 600;
+	font-size: 1.5rem;
+	margin: 0;
+}
+
+.admin-menu-toggle {
+	background: none;
+	border: none;
+	font-size: 1.2rem;
+	color: var(--text);
+	cursor: pointer;
+	padding: 5px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.admin-header-right {
+	display: flex;
+	align-items: center;
+	gap: 25px;
+}
+
+.admin-user-info {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.admin-user-avatar {
+	width: 45px;
+	height: 45px;
+	border-radius: 50%;
+	background: var(--primary-cyan);
+	color: #000;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 20px;
+	font-weight: 600;
+}
+
+.admin-user-name {
+	font-weight: 600;
+	font-size: 0.9rem;
+	line-height: 1.2;
+}
+
+.admin-user-role {
+	font-size: 0.8rem;
+	color: var(--text-muted);
+}
+
+.admin-logout-btn {
+	color: var(--danger);
+	text-decoration: none;
+	font-weight: 500;
+	transition: 0.3s;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.admin-logout-btn:hover {
+	color: #b91c1c;
+}
+
+/* Content Area */
+.admin-content {
+	padding: 35px;
+	overflow-y: auto;
+}
+
+/* Alerts */
+.admin-alert {
+	padding: 15px 20px;
+	border-radius: 10px;
+	margin-bottom: 25px;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	font-weight: 500;
+}
+
+.admin-alert-success {
+	background: rgba(16, 185, 129, 0.1);
+	color: var(--success);
+	border-left: 5px solid var(--success);
+}
+
+.admin-alert-error {
+	background: rgba(239, 68, 68, 0.1);
+	color: var(--danger);
+	border-left: 5px solid var(--danger);
+}
+
+/* Add Career Form */
+.admin-form {
+	background: var(--bg-gradient);
+	color: var(--white);
+	border-radius: 18px;
+	padding: 35px;
+	margin-bottom: 35px;
+	box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+.admin-form h3 {
+	color: var(--primary-cyan);
+	margin-top: 0;
+	margin-bottom: 25px;
+	font-size: 1.4rem;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.admin-form-row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20px;
+	margin-bottom: 20px;
+}
+
+.admin-form-group {
+	flex: 1;
+	min-width: 250px;
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 20px;
+}
+
+.admin-form-row .admin-form-group {
+	margin-bottom: 0;
+}
+
+.admin-form label {
+	color: var(--text-muted);
+	margin-bottom: 8px;
+	font-size: 0.9rem;
+	font-weight: 500;
+}
+
+/* Updated Form Inputs and Textareas */
+.admin-form input, .admin-form textarea {
+	background: rgba(255, 255, 255, 0.05) !important;
+	border: 1px solid rgba(255, 255, 255, 0.2) !important;
+	color: var(--white) !important;
+	padding: 12px 15px;
+	border-radius: 8px;
+	outline: none;
+	font-size: 0.95rem;
+	width: 100%;
+	box-sizing: border-box;
+	font-family: 'Poppins', sans-serif;
+	transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.admin-form textarea {
+	resize: vertical;
+	min-height: 80px;
+}
+
+.admin-form input:focus, .admin-form textarea:focus {
+	border-color: var(--primary-cyan) !important;
+	box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.15);
+}
+
+.admin-form input::placeholder, .admin-form textarea::placeholder {
+	color: rgba(255, 255, 255, 0.4);
+}
+
+.admin-form-actions {
+	margin-top: 30px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 15px;
+}
+
+/* Buttons */
+.admin-btn {
+	border: none;
+	border-radius: 30px;
+	padding: 10px 24px;
+	font-weight: 600;
+	transition: .3s;
+	text-decoration: none;
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	gap: 8px;
+	cursor: pointer;
+	font-size: 0.9rem;
+}
+
+.admin-btn-primary {
+	background: var(--primary-cyan);
+	color: #000;
+	box-shadow: 0 4px 15px rgba(34, 211, 238, 0.2);
+}
+
+.admin-btn-primary:hover {
+	background: var(--white);
+	transform: translateY(-2px);
+}
+
+.admin-btn-secondary {
+	background: transparent;
+	color: var(--primary-cyan);
+	border: 2px solid var(--primary-cyan);
+}
+
+.admin-btn-secondary:hover {
+	background: var(--primary-cyan);
+	color: #000;
+}
+
+/* Tables */
+.admin-table-container {
+	background: var(--white);
+	border-radius: 18px;
+	padding: 30px;
+	margin-bottom: 30px;
+	box-shadow: 0 10px 25px rgba(0, 0, 0, .03);
+	border: 1px solid var(--border);
+	overflow-x: auto;
+}
+
+.admin-table-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 15px;
+	margin-bottom: 25px;
+}
+
+.admin-table-header h3 {
+	color: var(--bg-dark-blue);
+	margin: 0;
+	font-size: 1.25rem;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.admin-table-header h3 i {
+	color: var(--primary-cyan);
+}
+
+.admin-table-actions {
+	display: flex;
+	gap: 15px;
+	align-items: center;
+}
+
+.admin-search-box {
+	position: relative;
+}
+
+.admin-search-box i {
+	position: absolute;
+	left: 12px;
+	top: 50%;
+	transform: translateY(-50%);
+	color: var(--text-muted);
+}
+
+.admin-search-box input {
+	padding: 10px 15px 10px 35px;
+	border: 1px solid var(--border);
+	border-radius: 8px;
+	outline: none;
+	transition: 0.3s;
+	font-family: 'Poppins', sans-serif;
+	width: 220px;
+	background: var(--white) !important;
+	color: var(--text-dark) !important;
+}
+
+.admin-search-box input:focus {
+	border-color: var(--primary-cyan);
+	box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.15);
+}
+
+.admin-table {
+	width: 100%;
+	border-collapse: collapse;
+	min-width: 800px;
+}
+
+.admin-table th, .admin-table td {
+	padding: 15px;
+	text-align: left;
+	border-bottom: 1px solid var(--border);
+	vertical-align: middle;
+}
+
+.admin-table th {
+	color: var(--text-muted);
+	font-weight: 600;
+	font-size: 0.85rem;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+}
+
+.admin-table td {
+	font-size: 0.95rem;
+	color: var(--text);
+}
+
+/* Badges */
+.admin-badge {
+	padding: 6px 12px;
+	border-radius: 20px;
+	font-size: 0.8rem;
+	font-weight: 600;
+	display: inline-block;
+	text-align: center;
+}
+
+.admin-badge.active {
+	background: rgba(16, 185, 129, 0.1);
+	color: var(--success);
+}
+
+/* Action Buttons */
+.admin-action-btn {
+	background: none;
+	border: none;
+	cursor: pointer;
+	padding: 8px;
+	border-radius: 6px;
+	transition: 0.3s;
+	color: var(--text-muted);
+	font-size: 1rem;
+	margin-right: 5px;
+}
+
+.admin-action-btn.view:hover {
+	color: var(--primary-cyan);
+	background: rgba(34, 211, 238, 0.1);
+}
+
+.admin-action-btn.edit:hover {
+	color: var(--warning);
+	background: rgba(245, 158, 11, 0.1);
+}
+
+.admin-action-btn.delete:hover {
+	color: var(--danger);
+	background: rgba(239, 68, 68, 0.1);
+}
+</style>
+<link rel="stylesheet" href="../css/brand-system.css">
+</head>
+<body class="admin-body">
+	<div class="dashboard-layout">
+		<!-- Sidebar -->
+		<aside class="admin-sidebar" id="sidebar">
+			<div class="admin-sidebar-header">
+				<h2>
+					Smart<span>Career</span>
+				</h2>
+				<p style="color: var(--admin-gold); font-weight: 700; font-size: 11px; margin-top: 5px; margin-bottom: 0; letter-spacing: 1px; text-transform: uppercase;">
+					<i class="fas fa-shield-alt"></i> Executive Control Center
+				</p>
+			</div>
+			<nav class="admin-sidebar-nav">
+				<ul>
+					<li><a href="dashboard.html"><i class="fas fa-home"></i>
+							Dashboard</a></li>
+					<li><a href="users.html"><i class="fas fa-users"></i>
+							User Management</a></li>
+					<li><a href="assessments.html"><i
+							class="fas fa-clipboard-list"></i> Assessments</a></li>
+					<li><a href="questions.html"><i
+							class="fas fa-question-circle"></i> Questions</a></li>
+					<li><a href="careers.html" class="active"><i
+							class="fas fa-briefcase"></i> Careers</a></li>
+					<li><a href="recommendations.html"><i
+							class="fas fa-star"></i> Recommendations</a></li>
+					<li><a href="analytics.html"><i class="fas fa-chart-bar"></i>
+							Analytics</a></li>
+					<li><a href="profile.html"><i class="fas fa-user-cog"></i> Profile</a></li>
+				</ul>
+			</nav>
+			<div class="admin-sidebar-footer">
+				<p style="margin: 0;">&copy; 2026 Smart Career System</p>
+			</div>
+		</aside>
+
+		<!-- Main Content -->
+		<main class="admin-main">
+			<!-- Header -->
+			<header class="admin-header">
+				<div class="admin-header-left">
+					<button class="admin-menu-toggle" onclick="toggleSidebar()">
+						<i class="fas fa-bars"></i>
+					</button>
+					<h1>Career Management</h1>
+				</div>
+				<div class="admin-header-right">
+					<div class="admin-user-info">
+						<div class="admin-user-avatar"><i class="fas fa-user-shield"></i></div>
+						<div>
+							<div class="admin-user-name" style="font-weight:600; font-size:0.9rem;">Administrator</div>
+							<div class="admin-user-role">Administrator</div>
+						</div>
+					</div>
+					<a href="login.html" onclick="handleAdminLogout(event)" class="admin-logout-btn"> <i
+						class="fas fa-sign-out-alt"></i> Logout
+					</a>
+				</div>
+			</header>
+
+			<!-- Content -->
+			<div class="admin-content">
+				
+				
+				
+				
+				
+				
+
+				<!-- Add Career Form -->
+				<div class="admin-form">
+					<h3>
+						<i class="fas fa-plus-circle"></i> Add New Career
+					</h3>
+					<form action="/api/admin/create-career" method="post">
+						<div class="admin-form-row">
+							<div class="admin-form-group">
+								<label for="careerName">Career Name</label> <input type="text"
+									id="careerName" name="careerName"
+									placeholder="e.g., Software Developer" required>
+							</div>
+							<div class="admin-form-group">
+								<label for="qualification">Qualification</label> <input
+									type="text" id="qualification" name="qualification"
+									placeholder="e.g., Bachelor's in Computer Science" required>
+							</div>
+						</div>
+						<div class="admin-form-group">
+							<label for="description">Description</label>
+							<textarea id="description" name="description" rows="3"
+								placeholder="Brief description of the career role" required></textarea>
+						</div>
+						<div class="admin-form-group">
+							<label for="requiredSkills">Required Skills
+								(comma-separated)</label> <input type="text" id="requiredSkills"
+								name="requiredSkills" placeholder="e.g., Java, Python, SQL"
+								required>
+						</div>
+						<div class="admin-form-actions">
+							<button type="submit" class="admin-btn admin-btn-primary">
+								<i class="fas fa-plus"></i> Add Career
+							</button>
+							<button type="reset" class="admin-btn admin-btn-secondary">
+								<i class="fas fa-undo"></i> Reset
+							</button>
+						</div>
+					</form>
+				</div>
+
+				<!-- Add Master Skill & Domain Interest (Admin Authority) -->
+				<div class="admin-form" style="margin-top: 25px;">
+					<h3>
+						<i class="fas fa-tools"></i> Add Master Skill or Domain Interest (Admin Authority)
+					</h3>
+					<div class="admin-form-row">
+						<form action="/api/admin/create-skill" method="post" style="flex: 1;">
+							<div class="admin-form-group">
+								<label for="skillName">New Master Skill Name</label>
+								<input type="text" id="skillName" name="skillName" placeholder="e.g., Flutter, Rust, Go" required>
+							</div>
+							<button type="submit" class="admin-btn admin-btn-primary" style="margin-top: 10px;">
+								<i class="fas fa-plus"></i> Add Master Skill
+							</button>
+						</form>
+						<form action="/api/admin/create-interest" method="post" style="flex: 1;">
+							<div class="admin-form-group">
+								<label for="interestName">New Domain Interest Name</label>
+								<input type="text" id="interestName" name="interestName" placeholder="e.g., Quantum Computing, Blockchain" required>
+							</div>
+							<button type="submit" class="admin-btn admin-btn-primary" style="margin-top: 10px;">
+								<i class="fas fa-plus"></i> Add Domain Interest
+							</button>
+						</form>
+					</div>
+				</div>
+
+				<!-- Careers Table -->
+				<div class="admin-table-container">
+					<div class="admin-table-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px; margin-bottom:20px;">
+						<h3 style="margin:0; font-size:1.2rem; display:flex; align-items:center;">
+							<i class="fas fa-briefcase" style="margin-right:8px; color:var(--primary-cyan);"></i> Existing Careers 
+							<span id="cTotalCountBadge" style="background:rgba(34,211,238,0.15); color:var(--primary-hover); padding:3px 12px; border-radius:12px; font-size:0.85rem; font-weight:700; margin-left:10px;">(0 Careers)</span>
+						</h3>
+						<div class="admin-table-actions" style="display:flex; align-items:center; gap:15px;">
+							<div style="display:flex; align-items:center; gap:6px; font-size:0.85rem; color:var(--text-muted);">
+								<span>Rows:</span>
+								<select id="cPageSizeSelect" onchange="changeCPageSize()" style="padding:5px 10px; border-radius:6px; background:var(--bg); border:1px solid var(--border); color:var(--text); font-weight:600; cursor:pointer;">
+									<option value="10" selected>10 per page</option>
+									<option value="25">25 per page</option>
+									<option value="ALL">Show All (17)</option>
+								</select>
+							</div>
+							<div class="admin-search-box" style="display:flex; align-items:center; gap:8px; background:var(--bg); border:1px solid var(--border); padding:6px 12px; border-radius:8px;">
+								<i class="fas fa-search" style="color:var(--text-muted);"></i>
+								<input type="text" id="careerSearchInput" onkeyup="filterCareersTable()" placeholder="Search careers by name or skills..." style="border:none; outline:none; background:transparent; width:250px; font-size:0.9rem;">
+							</div>
+						</div>
+					</div>
+					<table class="admin-table">
+						<thead>
+							<tr>
+								<th style="width:70px;">Sr. No.</th>
+								<th>Career Name</th>
+								<th>Description</th>
+								<th>Required Skills</th>
+								<th>Qualification</th>
+								<th style="width:140px;">Actions</th>
+							</tr>
+						</thead>
+						<tbody>
+							
+							
+							
+							<tr>
+								<td>#</td>
+								<td><strong></strong></td>
+								<td></td>
+								<td></td>
+								<td><span class="admin-badge active">Active</span></td>
+								<td>
+									<button class="admin-action-btn view" title="View">
+										<i class="fas fa-eye"></i>
+									</button>
+									<button class="admin-action-btn edit" title="Edit">
+										<i class="fas fa-edit"></i>
+									</button>
+									<button class="admin-action-btn delete" title="Delete">
+										<i class="fas fa-trash"></i>
+									</button>
+								</td>
+							</tr>
+							
+							
+							<tr>
+								<td colspan="6"
+									style="text-align: center; padding: 40px; color: var(--text-muted);">No
+									careers added yet.</td>
+							</tr>
+							
+						</tbody>
+					</table>
+
+					<!-- Dynamic Pagination Bar -->
+					<div id="careersPaginationBar" style="display:flex; justify-content:space-between; align-items:center; padding:15px 20px; background:#fff; border-top:1px solid var(--border); font-size:0.88rem; flex-wrap:wrap; gap:10px;"></div>
+
+					<!-- Dynamic Pagination Bar -->
+					<div id="careersPaginationBar" style="display:flex; justify-content:space-between; align-items:center; padding:15px 20px; background:#fff; border-top:1px solid var(--border); font-size:0.88rem; flex-wrap:wrap; gap:10px;"></div>
+				</div>
+			</div>
+		</main>
+	</div>
+
+	
+
+    
+    
+    <script src="../js/api.js"></script>
+    <script>
+        window.careersDataMap = {};
+        window.allCareersList = [];
+        let currentCareerPage = 1;
+        let careerPageSize = 10;
+
+        function changeCPageSize() {
+            const val = document.getElementById('cPageSizeSelect').value;
+            if (val === 'ALL') {
+                careerPageSize = window.allCareersList.length || 17;
+            } else {
+                careerPageSize = parseInt(val);
+            }
+            currentCareerPage = 1;
+            renderCareersPagination();
+        }
+
+        function viewCareerModal(id) {
+            const c = window.careersDataMap[id];
+            if (!c) return;
+            const modal = document.getElementById('viewCareerModal');
+            const content = document.getElementById('viewCareerContent');
+            if (modal && content) {
+                content.innerHTML = `
+                    <div><strong style="color:var(--primary-cyan);">Career Name:</strong> ${c.careerName}</div>
+                    <div><strong style="color:var(--primary-cyan);">Description:</strong> ${c.description || 'N/A'}</div>
+                    <div><strong style="color:var(--primary-cyan);">Required Skills:</strong> ${c.requiredSkills || 'Java, Python'}</div>
+                    <div><strong style="color:var(--primary-cyan);">Qualification:</strong> ${c.qualification || 'B.E. / B.Tech'}</div>
+                `;
+                modal.style.display = 'flex';
+            }
+        }
+
+        function closeViewCareerModal() {
+            const modal = document.getElementById('viewCareerModal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function openEditCareerModal(id) {
+            const c = window.careersDataMap[id];
+            if (!c) return;
+            document.getElementById('editCId').value = c.id;
+            document.getElementById('editCName').value = c.careerName || '';
+            document.getElementById('editCDesc').value = c.description || '';
+            document.getElementById('editCSkills').value = c.requiredSkills || '';
+            document.getElementById('editCQual').value = c.qualification || '';
+            document.getElementById('editCareerModal').style.display = 'flex';
+        }
+
+        function closeEditCareerModal() {
+            const modal = document.getElementById('editCareerModal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        async function deleteCareer(id) {
+            if (!confirm('Are you sure you want to delete this career profile?')) return;
+            try {
+                await apiRequest(`/v1/admin/careers/${id}`, 'DELETE');
+                alert('Career profile deleted successfully!');
+                location.reload();
+            } catch (err) {
+                alert('Failed to delete career profile.');
+            }
+        }
+
+        function renderCareersPagination() {
+            const input = document.getElementById('careerSearchInput');
+            const filter = input ? input.value.toLowerCase() : '';
+            const tbody = document.querySelector('table tbody');
+            const pageBar = document.getElementById('careersPaginationBar');
+            const totalBadge = document.getElementById('cTotalCountBadge');
+
+            if (!tbody) return;
+
+            const filtered = window.allCareersList.filter(c => {
+                const text = (c.careerName || '') + ' ' + (c.description || '') + ' ' + (c.requiredSkills || '') + ' ' + (c.qualification || '');
+                return text.toLowerCase().includes(filter);
+            });
+
+            if (totalBadge) {
+                totalBadge.innerText = `(${filtered.length} Careers)`;
+            }
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:25px;">No matching careers found.</td></tr>`;
+                if (pageBar) pageBar.innerHTML = '';
+                return;
+            }
+
+            const totalPages = Math.ceil(filtered.length / careerPageSize);
+            if (currentCareerPage > totalPages) currentCareerPage = totalPages;
+
+            const start = (currentCareerPage - 1) * careerPageSize;
+            const end = Math.min(start + careerPageSize, filtered.length);
+            const pageItems = filtered.slice(start, end);
+
+            tbody.innerHTML = pageItems.map((c, idx) => `
+                <tr>
+                    <td style="font-weight:700;">${start + idx + 1}</td>
+                    <td style="font-weight:700; color:var(--text);">${c.careerName}</td>
+                    <td style="max-width:280px; font-size:0.88rem; color:var(--text-muted);">${c.description || '-'}</td>
+                    <td><span style="background:rgba(34,211,238,0.15); color:var(--primary-hover); padding:4px 10px; border-radius:12px; font-size:0.8rem; font-weight:600;">${c.requiredSkills || 'General'}</span></td>
+                    <td><span style="background:rgba(16,185,129,0.15); color:#10b981; padding:4px 10px; border-radius:12px; font-size:0.8rem; font-weight:600;">${c.qualification || 'B.E. / B.Tech'}</span></td>
+                    <td>
+                        <div style="display:flex; gap:6px;">
+                            <button onclick="viewCareerModal(${c.id})" title="View" style="background:rgba(34,211,238,0.15); color:var(--primary-cyan); border:1px solid rgba(34,211,238,0.3); padding:5px 8px; border-radius:6px; cursor:pointer;">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button onclick="openEditCareerModal(${c.id})" title="Edit" style="background:rgba(245,158,11,0.15); color:#f59e0b; border:1px solid rgba(245,158,11,0.3); padding:5px 8px; border-radius:6px; cursor:pointer;">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="deleteCareer(${c.id})" title="Delete" style="background:rgba(239,68,68,0.1); color:#ef4444; border:1px solid rgba(239,68,68,0.3); padding:5px 8px; border-radius:6px; cursor:pointer;">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+
+            // Render Pagination Bar
+            if (pageBar) {
+                const infoText = `Showing ${start + 1} to ${end} of ${filtered.length} careers`;
+                
+                let btnsHtml = `
+                    <div style="color:var(--text-muted); font-size:0.88rem;">${infoText}</div>
+                    <div style="display:flex; gap:5px; align-items:center;">
+                        <button onclick="goToCPage(1)" ${currentCareerPage === 1 ? 'disabled' : ''} style="padding:5px 10px; border-radius:6px; border:1px solid var(--border); background:var(--white); cursor:pointer; font-size:0.8rem;">&laquo; First</button>
+                        <button onclick="goToCPage(${currentCareerPage - 1})" ${currentCareerPage === 1 ? 'disabled' : ''} style="padding:5px 10px; border-radius:6px; border:1px solid var(--border); background:var(--white); cursor:pointer; font-size:0.8rem;">&lt; Prev</button>
+                `;
+
+                for (let p = 1; p <= totalPages; p++) {
+                    btnsHtml += `
+                        <button onclick="goToCPage(${p})" style="padding:5px 10px; border-radius:6px; border:1px solid var(--border); cursor:pointer; font-size:0.85rem; font-weight:600; ${p === currentCareerPage ? 'background:var(--primary-cyan); color:#000; border-color:var(--primary-cyan);' : 'background:var(--white); color:var(--text);'}">${p}</button>
+                    `;
+                }
+
+                btnsHtml += `
+                        <button onclick="goToCPage(${currentCareerPage + 1})" ${currentCareerPage === totalPages ? 'disabled' : ''} style="padding:5px 10px; border-radius:6px; border:1px solid var(--border); background:var(--white); cursor:pointer; font-size:0.8rem;">Next &gt;</button>
+                        <button onclick="goToCPage(${totalPages})" ${currentCareerPage === totalPages ? 'disabled' : ''} style="padding:5px 10px; border-radius:6px; border:1px solid var(--border); background:var(--white); cursor:pointer; font-size:0.8rem;">Last &raquo;</button>
+                    </div>
+                `;
+
+                pageBar.innerHTML = btnsHtml;
+            }
+        }
+
+        function goToCPage(page) {
+            currentCareerPage = page;
+            renderCareersPagination();
+        }
+
+        function filterCareersTable() {
+            currentCareerPage = 1;
+            renderCareersPagination();
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Form Submit for Add Career
+            const addForm = document.querySelector('form[action*="create-career"]');
+            if (addForm) {
+                addForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const payload = {
+                        careerName: document.getElementById('careerName').value,
+                        description: document.getElementById('description').value,
+                        requiredSkills: document.getElementById('requiredSkills').value,
+                        qualification: document.getElementById('qualification').value
+                    };
+                    try {
+                        await apiRequest('/v1/admin/careers', 'POST', payload);
+                        alert('New career path created successfully!');
+                        location.reload();
+                    } catch (err) {
+                        alert('Failed to create career path.');
+                    }
+                });
+            }
+
+            // Form Submit for Edit Career
+            const editForm = document.getElementById('editCareerForm');
+            if (editForm) {
+                editForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const id = document.getElementById('editCId').value;
+                    const payload = {
+                        id: parseInt(id),
+                        careerName: document.getElementById('editCName').value,
+                        description: document.getElementById('editCDesc').value,
+                        requiredSkills: document.getElementById('editCSkills').value,
+                        qualification: document.getElementById('editCQual').value
+                    };
+                    try {
+                        await apiRequest(`/v1/admin/careers/${id}`, 'PUT', payload);
+                        alert('Career profile updated successfully!');
+                        location.reload();
+                    } catch (err) {
+                        alert('Failed to update career profile.');
+                    }
+                });
+            }
+
+            try {
+                const careers = await apiRequest('/v1/admin/careers');
+                if (careers && careers.length > 0) {
+                    window.allCareersList = careers;
+                    careers.forEach(c => window.careersDataMap[c.id] = c);
+                    renderCareersPagination();
+                } else {
+                    const tbody = document.querySelector('table tbody');
+                    if (tbody) tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:25px;">No career profiles found. Use the form above to add one.</td></tr>`;
+                }
+            } catch (err) {
+                console.log('Careers list loaded');
+            }
+        });
+    </script>
+</body>
+
+
+
+</html>

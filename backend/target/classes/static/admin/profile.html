@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Profile - Smart Career System</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root {
+	--primary-cyan: #22d3ee;
+	--primary-hover: #06b6d4;
+	--bg-dark-blue: #0a141f;
+	--admin-gold: #fbbf24;
+	--bg-gradient: linear-gradient(135deg, #0f1c29 0%, #1a364b 50%, #1e455c 100%);
+	--success: #10b981;
+	--danger: #ef4444;
+	--warning: #f59e0b;
+	--bg: #f8fafc;
+	--white: #ffffff;
+	--text: #0f172a;
+	--text-light: #f8fafc;
+	--text-muted: #94a3b8;
+	--border: #e2e8f0;
+}
+
+body.admin-body {
+	font-family: 'Poppins', sans-serif;
+	background: var(--bg);
+	color: var(--text);
+	margin: 0;
+	padding: 0;
+	min-height: 100vh;
+}
+
+.dashboard-layout {
+	display: flex;
+	min-height: 100vh;
+}
+
+.admin-sidebar {
+	width: 260px;
+	min-width: 260px;
+	background: var(--bg-dark-blue);
+	color: var(--text-light);
+	display: flex;
+	flex-direction: column;
+}
+
+.admin-sidebar-header {
+	padding: 30px 20px;
+	text-align: center;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.admin-sidebar-header h2 {
+	color: var(--white);
+	font-size: 26px;
+	font-weight: 700;
+	margin: 0;
+}
+
+.admin-sidebar-header h2 span {
+	color: var(--primary-cyan);
+}
+
+.admin-sidebar-nav ul {
+	list-style: none;
+	padding: 0;
+	margin: 20px 0;
+}
+
+.admin-sidebar-nav ul li {
+	margin: 10px 15px;
+}
+
+.admin-sidebar-nav a {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	color: var(--text-muted);
+	padding: 14px 18px;
+	border-radius: 12px;
+	transition: .3s;
+	text-decoration: none;
+	font-weight: 500;
+}
+
+.admin-sidebar-nav a:hover, .admin-sidebar-nav a.active {
+	background: rgba(34, 211, 238, 0.1);
+	color: var(--primary-cyan);
+}
+
+.admin-main {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+}
+
+.admin-header {
+	background: var(--white);
+	padding: 18px 35px;
+	border-bottom: 1px solid var(--border);
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.admin-content {
+	padding: 35px;
+	flex: 1;
+}
+
+.profile-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+	gap: 25px;
+}
+
+.profile-card {
+	background: var(--white);
+	border-radius: 18px;
+	padding: 30px;
+	border: 1px solid var(--border);
+	box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03);
+}
+
+.profile-card h3 {
+	margin-top: 0;
+	margin-bottom: 20px;
+	color: var(--bg-dark-blue);
+	font-size: 1.2rem;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	border-bottom: 1px solid var(--border);
+	padding-bottom: 12px;
+}
+
+.info-item {
+	display: flex;
+	justify-content: space-between;
+	padding: 12px 0;
+	border-bottom: 1px solid var(--border);
+	font-size: 0.95rem;
+}
+
+.info-item span:first-child {
+	color: var(--text-muted);
+	font-weight: 500;
+}
+
+.info-item span:last-child {
+	font-weight: 600;
+	color: var(--text);
+}
+
+.admin-form-group {
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 18px;
+}
+
+.admin-form-group label {
+	font-size: 0.9rem;
+	color: var(--text-muted);
+	margin-bottom: 8px;
+	font-weight: 500;
+}
+
+.admin-form-group input {
+	padding: 12px 15px;
+	border-radius: 8px;
+	border: 1px solid var(--border);
+	outline: none;
+	font-size: 0.95rem;
+	font-family: inherit;
+}
+
+.admin-btn {
+	background: var(--primary-cyan);
+	color: #000;
+	border: none;
+	padding: 12px 24px;
+	border-radius: 8px;
+	font-weight: 700;
+	cursor: pointer;
+	transition: 0.3s;
+
+}
+
+.admin-btn:hover {
+	background: var(--primary-hover);
+	color: #fff;
+}
+</style>
+<link rel="stylesheet" href="../css/brand-system.css">
+</head>
+<body class="admin-body">
+
+<div class="dashboard-layout">
+	<aside class="admin-sidebar" id="sidebar">
+		<div class="admin-sidebar-header">
+			<h2>Smart<span>Career</span></h2>
+			<p style="color: var(--admin-gold); font-weight: 700; font-size: 11px; margin-top: 5px; margin-bottom: 0; letter-spacing: 1px; text-transform: uppercase;">
+				<i class="fas fa-shield-alt"></i> Executive Control Center
+			</p>
+		</div>
+		<nav class="admin-sidebar-nav">
+			<ul>
+				<li><a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a></li>
+				<li><a href="users.html"><i class="fas fa-users"></i> Users</a></li>
+				<li><a href="assessments.html"><i class="fas fa-file-alt"></i> Assessments</a></li>
+				<li><a href="questions.html"><i class="fas fa-question-circle"></i> Questions</a></li>
+				<li><a href="careers.html"><i class="fas fa-briefcase"></i> Careers</a></li>
+				<li><a href="recommendations.html"><i class="fas fa-lightbulb"></i> Recommendations</a></li>
+				<li><a href="analytics.html"><i class="fas fa-chart-line"></i> Analytics</a></li>
+				<li><a href="profile.html" class="active" class="active"><i class="fas fa-user-cog"></i> Profile</a></li>
+			</ul>
+		</nav>
+	</aside>
+
+	<main class="admin-main">
+		<header class="admin-header">
+			<h1><i class="fas fa-user-shield"></i> Administrator Control Profile</h1>
+			<a href="dashboard.html" style="text-decoration:none; color:var(--primary-hover); font-weight:600;"><i class="fas fa-arrow-left"></i> Dashboard</a>
+		</header>
+
+		<div class="admin-content">
+			<div class="profile-grid">
+				<!-- Account Details Card -->
+				<div class="profile-card">
+					<h3><i class="fas fa-user-circle" style="color:var(--primary-cyan);"></i> Administrator Account Profile</h3>
+					<div class="info-item"><span>Administrator Name:</span> <span id="adminName">System Administrator</span></div>
+					<div class="info-item"><span>Email Address:</span> <span id="adminEmail">admin@smartcareer.com</span></div>
+					<div class="info-item"><span>Contact Phone:</span> <span>+1 (800) 555-0199</span></div>
+					<div class="info-item"><span>Authority Role:</span> <span style="background:rgba(34,211,238,0.15); color:var(--primary-hover); padding:3px 10px; border-radius:12px; font-size:0.85rem;">SUPER_ADMIN</span></div>
+					<div class="info-item"><span>Control Center Version:</span> <span>v2.4 (Active)</span></div>
+					<div class="info-item"><span>System Status:</span> <span style="color:var(--success); font-weight:700;"><i class="fas fa-circle" style="font-size:0.7rem; margin-right:4px;"></i> Fully Operational</span></div>
+				</div>
+
+				<!-- Edit Profile Details Form -->
+				<div class="profile-card">
+					<h3><i class="fas fa-sliders" style="color:var(--primary-cyan);"></i> Profile Settings & Credentials</h3>
+					<form id="adminProfileForm">
+						<div class="admin-form-group">
+							<label for="inpAdminName">Administrator Full Name</label>
+							<input type="text" id="inpAdminName" value="System Administrator" required>
+						</div>
+						<div class="admin-form-group">
+							<label for="inpAdminEmail">Email Address</label>
+							<input type="email" id="inpAdminEmail" value="admin@smartcareer.com" required>
+						</div>
+						<div class="admin-form-group">
+							<label for="inpAdminPhone">Contact Phone Number</label>
+							<input type="text" id="inpAdminPhone" value="+1 (800) 555-0199" required>
+						</div>
+						<div style="margin-top:20px;">
+							<button type="submit" class="admin-btn"><i class="fas fa-save"></i> Save Profile Settings</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</main>
+</div>
+
+<script src="../js/api.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('adminProfileForm');
+    if (form) {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('inpAdminName').value;
+            const email = document.getElementById('inpAdminEmail').value;
+            document.getElementById('adminName').innerText = name;
+            document.getElementById('adminEmail').innerText = email;
+            alert('Administrator profile updated successfully!');
+        });
+    }
+});
+</script>
+
+    <script>
+        async function handleAdminLogout(e) {
+            if (e) e.preventDefault();
+            try {
+                if (typeof apiRequest === 'function') {
+                    await apiRequest('/v1/admin/logout', 'POST');
+                }
+            } catch (err) {}
+            localStorage.removeItem('adminUser');
+            sessionStorage.clear();
+            window.location.href = 'login.html';
+        }
+    </script>
+
+</body>
+</html>
